@@ -8,7 +8,7 @@
 
 **后台**（`/admin`）：密码登录、仪表盘、文章增删改（实时预览、粘贴/拖拽上传图片、Ctrl+S 保存）、评论审核（通过/拒绝/删除）。
 
-**评论**：匿名可评，自建图片验证码 + 蜜罐字段 + IP 限流（60 秒 1 条 / 每小时 10 条）+ 默认进待审。
+**评论**：匿名可评，自建图片验证码 + 蜜罐字段 + IP 限流（30 秒 1 条 / 每小时 10 条）+ 默认进待审。
 
 **图片**：上传后 Pillow 校验、按 EXIF 摆正、限宽 1920、转 WebP 并生成 480 宽缩略图，存 `media/YYYY/MM/`，生产环境由 nginx 直接托管。
 
@@ -85,4 +85,4 @@ venv/bin/python -m scripts.backup --keep 14
 | `COOKIE_SECURE` | HTTPS 部署置 1 |
 | `DEBUG` | 生产置 0，关闭 `/api/docs` |
 | `SITE_URL` | 用于 RSS / sitemap / 分享卡片绝对地址 |
-| `COMMENT_REQUIRE_APPROVAL` | 默认 1，评论先进待审 |
+| `COMMENT_REQUIRE_APPROVAL` | 1=先进待审；0=直接显示（本项目本地用 0） |

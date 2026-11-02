@@ -16,13 +16,15 @@ class CommentRejected(Exception):
 
 
 def _touch_rate_limit(ip: str) -> None:
-    """先记账再判断，防止被刷的时候绕过限流。"""
-    wait_short = rate_limiter.check(f"c:{ip}:60", settings.comment_rate_seconds, 1)
+    """两个窗口都通过才记账，避免被小时限制拒绝时污染 30 秒窗口。"""
+    wait_short = rate_limiter.peek(f"c:{ip}:60", settings.comment_rate_seconds, 1)
+    wait_hour = rate_limiter.peek(f"c:{ip}:3600", 3600, settings.comment_rate_per_hour)
     if wait_short > 0:
         raise CommentRejected(f"评论太频繁，请 {int(wait_short) + 1} 秒后再试")
-    wait_hour = rate_limiter.check(f"c:{ip}:3600", 3600, settings.comment_rate_per_hour)
     if wait_hour > 0:
         raise CommentRejected("单位时间内评论过多，请稍后再试")
+    rate_limiter.check(f"c:{ip}:60", settings.comment_rate_seconds, 1)
+    rate_limiter.check(f"c:{ip}:3600", 3600, settings.comment_rate_per_hour)
 
 
 def submit_comment(

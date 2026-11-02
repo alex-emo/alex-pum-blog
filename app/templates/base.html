@@ -16,10 +16,10 @@
   <meta property="og:description" content="{% block og_description %}{{ settings.site_description }}{% endblock %}">
   <meta property="og:url" content="{{ settings.site_url }}{{ request.url.path }}">
 
-  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="{{ asset_url('/static/favicon.svg') }}" type="image/svg+xml">
   <link rel="alternate" type="application/rss+xml" title="{{ settings.site_name }}" href="/rss.xml">
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="/static/css/pygments.css">
+  <link rel="stylesheet" href="{{ asset_url('/static/css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset_url('/static/css/pygments.css') }}">
   {% block head %}{% endblock %}
 </head>
 <body>

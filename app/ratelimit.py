@@ -15,19 +15,31 @@ class RateLimiter:
         self._lock = threading.Lock()
         self._max_events = max_events
 
+    def _wait(self, bucket: deque[float], seconds: int, limit: int, now: float) -> float:
+        while bucket and bucket[0] < now - seconds:
+            bucket.popleft()
+        if limit <= 0:
+            return float(seconds)
+        if len(bucket) >= limit:
+            return max(0.0, bucket[0] + seconds - now)
+        return 0.0
+
+    def peek(self, key: str, seconds: int, limit: int) -> float:
+        """只查询是否会被限流，不记账。"""
+        with self._lock:
+            return self._wait(self._hits[key], seconds, limit, time.time())
+
     def check(self, key: str, seconds: int, limit: int) -> float:
         """在 seconds 秒内最多允许 limit 次。
 
         返回 0 表示放行；大于 0 表示还需要等待多少秒。
         """
         now = time.time()
-        window_start = now - seconds
         with self._lock:
             bucket = self._hits[key]
-            while bucket and bucket[0] < window_start:
-                bucket.popleft()
-            if len(bucket) >= limit:
-                return max(0.0, bucket[0] + seconds - now)
+            wait = self._wait(bucket, seconds, limit, now)
+            if wait > 0:
+                return wait
             bucket.append(now)
             # 粗暴防止 key 无限增长
             if len(self._hits) > self._max_events:

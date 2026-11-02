@@ -113,10 +113,21 @@ class CommentCreate(BaseModel):
     # 蜜罐：正常用户看不到这个字段，机器人会填
     website: str = ""
 
-    @field_validator("author_name", "content")
+    @field_validator("author_name")
     @classmethod
-    def _strip(cls, value: str) -> str:
-        return value.strip()
+    def _strip_author(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("昵称不能为空")
+        return value
+
+    @field_validator("content")
+    @classmethod
+    def _strip_content(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) < 2:
+            raise ValueError("评论内容至少 2 个字")
+        return value
 
 
 class CommentOut(BaseModel):

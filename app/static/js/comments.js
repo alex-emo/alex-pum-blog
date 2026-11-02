@@ -37,7 +37,10 @@
     captchaImage.alt = "验证码加载中";
     try {
       const response = await fetch("/api/captcha", { credentials: "same-origin" });
-      if (!response.ok) throw new Error("验证码加载失败");
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(errorText(data) || "验证码加载失败");
+      }
       const data = await response.json();
       captchaId = data.captcha_id;
       captchaImage.src = data.image;
@@ -46,6 +49,7 @@
     } catch (err) {
       captchaImage.alt = "验证码加载失败，请点击刷新";
       captchaId = "";
+      showMessage(err.message || "验证码加载失败，请点击刷新", true);
     }
   }
 
@@ -140,7 +144,7 @@
           captcha_id: captchaId,
           captcha_answer: captchaAnswer.value.trim(),
           parent_id: replyingTo ? Number(replyingTo) : null,
-          website: form.querySelector('[name="website"]').value,
+          website: (form.querySelector('[name="website"]') || {}).value || "",
         }),
       });
       const data = await response.json().catch(() => ({}));

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>登录 · {{ settings.site_name }}</title>
-  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="icon" href="{{ asset_url('/static/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ asset_url('/static/css/admin.css') }}">
 </head>
 <body class="login-body" data-page="login" data-next="{{ next_url }}">
   <main class="login-card">
@@ -29,7 +29,7 @@
     <p class="login-footer"><a href="/">← 回到博客</a></p>
   </main>
 
-  <script src="/static/js/api.js" defer></script>
-  <script src="/static/js/admin.js" defer></script>
+  <script src="{{ asset_url('/static/js/api.js') }}" defer></script>
+  <script src="{{ asset_url('/static/js/admin.js') }}" defer></script>
 </body>
 </html>

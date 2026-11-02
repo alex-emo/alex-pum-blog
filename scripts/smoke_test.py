@@ -14,6 +14,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 from PIL import Image  # noqa: E402
 
 from app.captcha import captcha_store  # noqa: E402
+from app.config import settings  # noqa: E402
 from app.main import app  # noqa: E402
 
 USERNAME = "admin"
@@ -107,19 +108,25 @@ def main() -> int:
         json={"author_name": "读者", "content": "写得好", "captcha_id": "ok", "captcha_answer": "ok"},
     )
     check("提交评论", submitted.status_code == 200, submitted.text)
-    check("默认进待审", submitted.json().get("pending") is True, submitted.text)
 
-    comments = client.get(f"/api/posts/{slug}/comments").json()
-    check("待审评论不公开", comments == [], str(comments))
+    if settings.comment_require_approval:
+        check("默认进待审", submitted.json().get("pending") is True, submitted.text)
 
-    pending = client.get("/api/admin/comments", params={"status": "pending"}).json()
-    check("后台能看到待审", pending["meta"]["total"] >= 1, str(pending)[:150])
-    comment_id = pending["items"][0]["id"]
-    approved = client.post(f"/api/admin/comments/{comment_id}/approve", headers=headers)
-    check("审核通过", approved.status_code == 200, approved.text)
+        comments = client.get(f"/api/posts/{slug}/comments").json()
+        check("待审评论不公开", comments == [], str(comments))
 
-    comments = client.get(f"/api/posts/{slug}/comments").json()
-    check("通过后前台可见", len(comments) == 1, str(comments))
+        pending = client.get("/api/admin/comments", params={"status": "pending"}).json()
+        check("后台能看到待审", pending["meta"]["total"] >= 1, str(pending)[:150])
+        comment_id = pending["items"][0]["id"]
+        approved = client.post(f"/api/admin/comments/{comment_id}/approve", headers=headers)
+        check("审核通过", approved.status_code == 200, approved.text)
+
+        comments = client.get(f"/api/posts/{slug}/comments").json()
+        check("通过后前台可见", len(comments) == 1, str(comments))
+    else:
+        check("无需审核直接公开", submitted.json().get("pending") is False, submitted.text)
+        comments = client.get(f"/api/posts/{slug}/comments").json()
+        check("提交后立即显示", len(comments) == 1, str(comments))
 
     print("[6] 图片上传")
     buffer = io.BytesIO()

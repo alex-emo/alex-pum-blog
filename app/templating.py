@@ -72,6 +72,18 @@ def page_url(request: Request, base_path: str, number: int) -> str:
     return f"{path}?{urlencode(params)}" if params else path
 
 
+def asset_url(url: str) -> str:
+    """静态资源追加 mtime 版本号，避免浏览器缓存旧 JS/CSS。"""
+    if not url.startswith("/static/"):
+        return url
+    path = settings.static_dir / url[len("/static/"):]
+    try:
+        version = int(path.stat().st_mtime)
+    except OSError:
+        return url
+    return f"{url}?v={version}"
+
+
 def _build_env() -> Environment:
     env = Environment(
         loader=FileSystemLoader(str(settings.templates_dir)),
@@ -86,6 +98,7 @@ def _build_env() -> Environment:
     env.filters["post_url"] = lambda slug: f"/{slug}"
     env.filters["tag_url"] = lambda slug: f"/tag/{slug}"
     env.globals["settings"] = settings
+    env.globals["asset_url"] = asset_url
     return env
 
 

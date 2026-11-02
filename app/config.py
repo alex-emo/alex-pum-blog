@@ -65,7 +65,7 @@ class Settings:
         # ---- 站点行为 ----
         self.page_size: int = _int("PAGE_SIZE", 10)
         self.comment_require_approval: bool = _bool("COMMENT_REQUIRE_APPROVAL", True)
-        self.comment_rate_seconds: int = _int("COMMENT_RATE_SECONDS", 60)
+        self.comment_rate_seconds: int = _int("COMMENT_RATE_SECONDS", 30)
         self.comment_rate_per_hour: int = _int("COMMENT_RATE_PER_HOUR", 10)
         self.comment_attempts_per_hour: int = _int("COMMENT_ATTEMPTS_PER_HOUR", 40)
         self.upload_max_bytes: int = _int("UPLOAD_MAX_BYTES", 10 * 1024 * 1024)
