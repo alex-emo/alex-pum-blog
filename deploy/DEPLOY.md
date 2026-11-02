@@ -207,6 +207,7 @@ ssh root@blog.pum.org.cn 'cd /srv/blog && \
 `deploy/nginx-blog.conf` 开头有两个 `default_server`：未匹配 `blog.pum.org.cn` 的请求（包括直接用 IP 访问）一律 `return 444` 断开。更新配置后：
 
 ```bash
+git config --global --add safe.directory /srv/blog   # 仓库属主是 blog，root 跑 git 需要
 cd /srv/blog && git pull
 install -m 644 deploy/nginx-blog.conf /etc/nginx/sites-available/blog
 nginx -t && systemctl reload nginx

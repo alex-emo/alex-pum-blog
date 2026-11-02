@@ -122,6 +122,7 @@ done
 curl -fsS http://127.0.0.1:8010/api/health >/dev/null || die "健康检查失败，看 journalctl -u blog -n 100"
 echo "uvicorn 已在 127.0.0.1:8010 运行"
 
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 say "9/9 nginx + HTTPS"
 install -m 644 "$APP_DIR/deploy/nginx-blog.conf" /etc/nginx/sites-available/blog
 ln -sf /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
