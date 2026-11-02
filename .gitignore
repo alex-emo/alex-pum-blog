@@ -11,3 +11,4 @@ media/
 backups/
 .preview*
 .dev-server.log
+.git-ssh/
