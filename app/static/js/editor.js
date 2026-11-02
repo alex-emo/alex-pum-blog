@@ -137,7 +137,7 @@
       deleteButton.hidden = false;
       noteEl.textContent = "创建于 " + formatDate(post.created_at) +
         (post.published_at ? "，发布于 " + formatDate(post.published_at) : "");
-      publishButton.textContent = currentStatus === "published" ? "更新" : "发布";
+      syncButtons();
       setSaved(currentStatus === "published" ? "已发布" : "草稿");
       renderPreview();
     } catch (err) {
@@ -192,7 +192,7 @@
         deleteButton.hidden = false;
         history.replaceState(null, "", "/admin/posts/" + postId + "/edit");
       }
-      publishButton.textContent = currentStatus === "published" ? "更新" : "发布";
+      syncButtons();
       setSaved(status === "published" ? "已发布" : "已存草稿");
       toast(status === "published" ? "已发布" : "草稿已保存");
     } catch (err) {
@@ -205,7 +205,13 @@
     }
   }
 
-  draftButton.addEventListener("click", () => save(currentStatus === "published" ? "published" : "draft"));
+  function syncButtons() {
+    const published = currentStatus === "published";
+    publishButton.textContent = published ? "更新" : "发布";
+    draftButton.textContent = published ? "转为草稿" : "存草稿";
+  }
+
+  draftButton.addEventListener("click", () => save("draft"));
   publishButton.addEventListener("click", () => save("published"));
 
   deleteButton.addEventListener("click", async () => {
