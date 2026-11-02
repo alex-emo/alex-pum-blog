@@ -11,6 +11,7 @@ from app.captcha import captcha_store
 from app.database import get_db
 from app.deps import client_ip
 from app.models import CommentStatus, PostStatus
+from app.ratelimit import rate_limiter
 from app.services import comments as comment_service
 from app.services import posts as post_service
 
@@ -18,7 +19,10 @@ router = APIRouter(prefix="/api", tags=["comments"])
 
 
 @router.get("/captcha")
-def get_captcha() -> dict:
+def get_captcha(request: Request) -> dict:
+    # 验证码要画图，挡住无脑刷接口的请求
+    if rate_limiter.check(f"captcha:{client_ip(request)}", 60, 60) > 0:
+        raise HTTPException(status_code=429, detail="验证码请求过于频繁，请稍后再试")
     captcha_id, png = captcha_store.issue()
     encoded = base64.b64encode(png).decode()
     return {"captcha_id": captcha_id, "image": f"data:image/png;base64,{encoded}"}

@@ -1,4 +1,4 @@
-"""评论业务：提交校验（蜜罐 → 限流 → 验证码）、审核、树形展示。"""
+"""评论业务：提交校验（蜜罐 → 验证码 → 父评论 → 限流）、审核、树形展示。"""
 from __future__ import annotations
 
 from sqlalchemy import select
@@ -37,20 +37,23 @@ def submit_comment(
     if (payload.website or "").strip():
         raise CommentRejected("提交失败")
 
-    # 2) 限流
-    _touch_rate_limit(ip)
-
-    # 3) 验证码（一次性消费）
+    # 2) 验证码（一次性消费）；先验码再限流，输错验证码不会把用户锁 60 秒。
+    #    但验码前要有宽松的总次数限制，防止绕过“成功才计数”暴力试码。
+    if rate_limiter.check(f"c:{ip}:attempts", 3600, settings.comment_attempts_per_hour) > 0:
+        raise CommentRejected("尝试次数过多，请稍后再试")
     if not captcha_store.verify(payload.captcha_id, payload.captcha_answer):
         raise CommentRejected("验证码错误或已过期，请换一张")
 
-    # 4) 父评论校验：必须属于同一篇文章、已通过、且是顶层评论（只允许一层回复）
+    # 3) 父评论校验：必须属于同一篇文章、已通过、且是顶层评论（只允许一层回复）
     parent_id = payload.parent_id
     if parent_id is not None:
         parent = db.get(Comment, parent_id)
         if parent is None or parent.post_id != post.id or parent.status != CommentStatus.APPROVED:
             raise CommentRejected("回复的评论不存在")
         parent_id = parent.parent_id or parent.id  # 二级回复挂到顶层，保持两层结构
+
+    # 4) 限流只统计真正要入库的评论
+    _touch_rate_limit(ip)
 
     status = (
         CommentStatus.PENDING if settings.comment_require_approval else CommentStatus.APPROVED

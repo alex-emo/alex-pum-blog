@@ -19,6 +19,15 @@
   let captchaId = "";
   let replyingTo = null;
 
+  function errorText(data) {
+    const detail = data && data.detail;
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail) && detail.length && detail[0].msg) {
+      return "提交内容不合规：" + detail[0].msg;
+    }
+    return "";
+  }
+
   function showMessage(text, isError) {
     messageEl.textContent = text;
     messageEl.className = "form-msg " + (isError ? "err" : "ok");
@@ -56,14 +65,45 @@
     });
   });
 
-  function cancelReply() {
+  // 待审评论立即在列表里占个位，避免用户以为没提交成功
+  function showPendingPreview(text) {
+    const list = document.getElementById("comment-list");
+    if (!list) return;
+    const empty = list.querySelector(".comment-empty");
+    if (empty) empty.remove();
+
+    const article = document.createElement("article");
+    article.className = "comment comment-pending";
+    const head = document.createElement("header");
+    head.className = "comment-head";
+    const author = document.createElement("span");
+    author.className = "comment-author";
+    author.textContent = nameInput.value.trim();
+    const badge = document.createElement("span");
+    badge.className = "pending-badge";
+    badge.textContent = "待审核";
+    head.append(author, badge);
+    const body = document.createElement("p");
+    body.className = "comment-body";
+    body.textContent = text;
+    article.append(head, body);
+    list.appendChild(article);
+    article.scrollIntoView({ block: "nearest" });
+  }
+
+  function resetReply() {
     replyingTo = null;
     parentInput.value = "";
+  }
+
+  function cancelReply() {
+    resetReply();
     showMessage("", false);
   }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (submitButton.disabled) return;
 
     if (!nameInput.value.trim()) {
       showMessage("请填写昵称", true);
@@ -85,6 +125,7 @@
       return;
     }
 
+    const submitted = contentInput.value.trim();
     submitButton.disabled = true;
     showMessage("提交中…", false);
 
@@ -105,14 +146,16 @@
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.detail || "提交失败，请稍后再试");
+        throw new Error(errorText(data) || "提交失败，请稍后再试");
       }
 
-      showMessage(data.message || "提交成功", false);
       contentInput.value = "";
-      cancelReply();
+      resetReply();          // 只清回复状态，保留成功提示
+      showMessage(data.message || "提交成功", false);
+      messageEl.scrollIntoView({ block: "nearest" });
 
       if (data.pending) {
+        showPendingPreview(submitted);
         await loadCaptcha();
       } else {
         // 无需审核：直接刷新显示新评论

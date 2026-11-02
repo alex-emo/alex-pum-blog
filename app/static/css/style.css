@@ -295,8 +295,19 @@ h1, h2, h3, h4 { line-height: 1.35; margin: 0 0 .5em; font-weight: 650; letter-s
 .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: .5rem; }
+.form-hint { font-size: .85rem; color: var(--fg-muted); margin: -.3rem 0 1rem; }
+.comment-pending { opacity: .72; }
+.pending-badge {
+  font-size: .72rem; color: var(--accent-strong); background: var(--accent-soft);
+  padding: .08rem .45rem; border-radius: 999px;
+}
 .form-msg { font-size: .88rem; margin: 0; }
-.form-msg.ok { color: var(--accent-strong); }
+.form-msg.ok {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  padding: .32rem .65rem;
+  border-radius: var(--radius-sm);
+}
 .form-msg.err { color: var(--danger); }
 
 .btn-primary, .btn-ghost {

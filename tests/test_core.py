@@ -9,6 +9,7 @@ import io
 from fastapi.testclient import TestClient
 from PIL import Image
 
+from app.captcha import captcha_store
 from app.main import app
 
 
@@ -100,6 +101,39 @@ def test_comment_needs_approval(client, published_post):
 
     visible = client.get(f"/api/posts/{slug}/comments").json()
     assert [item["author_name"] for item in visible] == ["路人"]
+
+
+def test_failed_captcha_does_not_lock_the_user_out(client, published_post, monkeypatch):
+    """验证码输错只报错，不应把下一次正确提交挡在 60 秒限流外。"""
+    state = {"ok": False}
+    monkeypatch.setattr(captcha_store, "verify", lambda captcha_id, answer: state["ok"])
+
+    payload = {
+        "author_name": "路人",
+        "content": "第一次验证码输错了",
+        "captcha_id": "id-1",
+        "captcha_answer": "wrong",
+    }
+    slug = published_post["slug"]
+    first = client.post(f"/api/posts/{slug}/comments", json=payload)
+    assert first.status_code == 400
+    assert "验证码" in first.json()["detail"]
+
+    state["ok"] = True
+    payload["captcha_id"] = "id-2"
+    second = client.post(f"/api/posts/{slug}/comments", json=payload)
+    assert second.status_code == 200, second.text
+    assert second.json()["pending"] is True
+
+
+def test_second_comment_within_a_minute_is_rejected(client, published_post):
+    body = {"author_name": "路人", "content": "连着发两条", "captcha_id": "x", "captcha_answer": "y"}
+    slug = published_post["slug"]
+    assert client.post(f"/api/posts/{slug}/comments", json=body).status_code == 200
+
+    again = client.post(f"/api/posts/{slug}/comments", json=body)
+    assert again.status_code == 400
+    assert "频繁" in again.json()["detail"]
 
 
 def test_image_upload_converts_to_webp(client, login):

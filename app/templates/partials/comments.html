@@ -37,6 +37,9 @@
 
   <form id="comment-form" class="comment-form" novalidate>
     <h3 class="comment-form-title">发表评论</h3>
+    {% if settings.comment_require_approval %}
+    <p class="form-hint">提交后需博主审核，通过后才会公开显示。</p>
+    {% endif %}
 
     <div class="field">
       <label for="comment-author">昵称</label>

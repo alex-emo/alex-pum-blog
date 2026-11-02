@@ -67,6 +67,7 @@ class Settings:
         self.comment_require_approval: bool = _bool("COMMENT_REQUIRE_APPROVAL", True)
         self.comment_rate_seconds: int = _int("COMMENT_RATE_SECONDS", 60)
         self.comment_rate_per_hour: int = _int("COMMENT_RATE_PER_HOUR", 10)
+        self.comment_attempts_per_hour: int = _int("COMMENT_ATTEMPTS_PER_HOUR", 40)
         self.upload_max_bytes: int = _int("UPLOAD_MAX_BYTES", 10 * 1024 * 1024)
         self.upload_image_max_width: int = _int("UPLOAD_IMAGE_MAX_WIDTH", 1920)
         self.upload_thumb_width: int = _int("UPLOAD_THUMB_WIDTH", 480)
