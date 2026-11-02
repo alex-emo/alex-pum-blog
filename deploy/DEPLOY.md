@@ -227,3 +227,14 @@ Ali_Key=<AccessKeyId> Ali_Secret=<AccessKeySecret> bash deploy/setup-dns-cert.sh
 ```
 
 证书装到 `/etc/letsencrypt/live/blog.pum.org.cn/`（nginx 已在用这两个路径），acme.sh 自带每日续期与 reload。之后仍建议把备案接入阿里云，80 才能正常跳转 HTTPS。
+
+## 80 被备案拦截时：TLS-ALPN-01（最省事）
+
+不碰 80、不改 DNS、不要 API 密钥。Let's Encrypt 直连 443 做 TLS 校验，签发时短暂停 nginx：
+
+```bash
+cd /srv/blog && git pull
+bash deploy/setup-alpn-cert.sh
+```
+
+如果阿里云对未备案域名的 443 也做了拦截（握手就断），则改用 DNS-01：`bash deploy/setup-dns-cert.sh`（需要 RAM AccessKey）。
