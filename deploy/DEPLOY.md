@@ -1,5 +1,26 @@
 # 部署到 blog.pum.org.cn
 
+## 最快路径（推荐）
+
+服务器上以 root 执行：
+
+```bash
+apt-get update && apt-get install -y git
+git clone https://github.com/alex-emo/alex-pum-blog.git /srv/blog
+bash /srv/blog/deploy/install-server.sh
+```
+
+脚本会完成：依赖安装、swap、建用户、venv、`.env`（随机 SECRET_KEY）、迁移、建管理员（交互输密码）、
+systemd、nginx、自签证书占位、certbot 签发、防火墙、每日备份定时器。
+
+前提：`blog.pum.org.cn` 的 A 记录已指向本机，80/443 在安全组放行。DNS 未生效时脚本会跳过 certbot，
+稍后重跑 `ENABLE_HTTPS=1 bash /srv/blog/deploy/install-server.sh` 即可。
+
+下面的分步说明是脚本的等价手工流程，出问题时可以对照着排查。
+
+---
+
+
 目标环境：阿里云 Debian 12（2 核 1G），nginx + systemd + uvicorn 单进程 + SQLite。
 
 ```
