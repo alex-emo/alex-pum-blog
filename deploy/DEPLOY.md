@@ -23,6 +23,11 @@ echo '/swapfile none swap sw 0 0' >> /etc/fstab
 useradd --system --home /srv/blog --shell /usr/sbin/nologin blog
 mkdir -p /srv/blog && chown -R blog:blog /srv/blog
 
+# 关键：服务以 UMask=0027 运行，media 文件是 640 blog:blog，
+# nginx（www-data）要读图片必须进 blog 组，否则 /media/ 全 403
+usermod -aG blog www-data
+systemctl restart nginx
+
 # 防火墙
 ufw allow OpenSSH && ufw allow 'Nginx Full' && ufw --force enable
 ```
@@ -100,18 +105,39 @@ curl -s http://127.0.0.1:8010/api/health
 cp /srv/blog/deploy/nginx-blog.conf /etc/nginx/sites-available/blog
 ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
 rm -f /etc/nginx/sites-enabled/default
-nginx -t
 ```
 
-先只开 80 端口拿证书（nginx 配置里已留好 ACME 路径）：
+配置里 443 段的证书路径还不存在，所以先用一张 1 天的自签证书占位，让 `nginx -t` 通过；
+再用 webroot 方式签发真证书覆盖同名文件（不动 nginx 配置，避免 certbot 改写我们手写的段）：
 
 ```bash
-apt install -y certbot python3-certbot-nginx
-certbot --nginx -d blog.pum.org.cn --redirect -m 你的邮箱 --agree-tos
+apt install -y certbot
+mkdir -p /etc/letsencrypt/live/blog.pum.org.cn
+openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
+  -subj "/CN=blog.pum.org.cn" \
+  -keyout /etc/letsencrypt/live/blog.pum.org.cn/privkey.pem \
+  -out /etc/letsencrypt/live/blog.pum.org.cn/fullchain.pem
+nginx -t && systemctl reload nginx
+
+# 真证书（80 端口的 ACME 路径已在配置里放行）
+certbot certonly --webroot -w /var/www/html -d blog.pum.org.cn \
+  -m 你的邮箱 --agree-tos --no-eff-email
 nginx -t && systemctl reload nginx
 ```
 
+> 如果 DNS 还没解析到这台机器，certbot 会失败：先把 `blog.pum.org.cn` 的 A 记录指过来，再执行。
+
 验证：`curl -I https://blog.pum.org.cn` 应为 200，并且有 HSTS 头。
+
+续期由 `certbot.timer` 自动完成，但 webroot 方式不会自动 reload nginx，加一个部署钩子：
+
+```bash
+mkdir -p /etc/letsencrypt/renewal-hooks/deploy
+printf '#!/bin/sh\nsystemctl reload nginx\n' > /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+systemctl list-timers certbot.timer
+certbot renew --dry-run
+```
 
 ## 7. 每日备份
 

@@ -1,6 +1,8 @@
 """FastAPI 依赖注入：数据库会话、当前管理员、CSRF 校验、客户端 IP。"""
 from __future__ import annotations
 
+import hmac
+
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
@@ -56,6 +58,10 @@ def require_admin_csrf(
     """写操作依赖：已登录 + CSRF 双提交校验通过。"""
     cookie_token = request.cookies.get(CSRF_COOKIE_NAME, "")
     header_token = request.headers.get(CSRF_HEADER_NAME, "")
-    if not cookie_token or not header_token or cookie_token != header_token:
+    if (
+        not cookie_token
+        or not header_token
+        or not hmac.compare_digest(cookie_token, header_token)
+    ):
         raise HTTPException(status_code=403, detail="CSRF 校验失败，请刷新页面后重试")
     return admin
