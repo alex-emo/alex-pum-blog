@@ -12,3 +12,5 @@ pillow==13.0.0
 argon2-cffi==25.1.0
 itsdangerous==2.2.0
 pypinyin==0.55.0
+# 仅 scripts/smoke_test.py 需要（TestClient 基于 httpx）
+httpx==0.28.1
