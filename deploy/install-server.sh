@@ -113,8 +113,12 @@ say "8/9 systemd 服务"
 install -m 644 "$APP_DIR/deploy/blog.service" /etc/systemd/system/blog.service
 systemctl daemon-reload
 systemctl enable --now blog
-sleep 2
 systemctl is-active blog >/dev/null || die "blog 服务没起来，看 journalctl -u blog -n 100"
+# 首次启动要跑迁移，等最多 30 秒
+for _ in $(seq 1 30); do
+  curl -fsS http://127.0.0.1:8010/api/health >/dev/null 2>&1 && break
+  sleep 1
+done
 curl -fsS http://127.0.0.1:8010/api/health >/dev/null || die "健康检查失败，看 journalctl -u blog -n 100"
 echo "uvicorn 已在 127.0.0.1:8010 运行"
 
