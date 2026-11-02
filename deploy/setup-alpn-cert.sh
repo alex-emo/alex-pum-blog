@@ -19,6 +19,8 @@ if [ ! -x "$ACME" ]; then
 fi
 [ -x "$ACME" ] || { echo "acme.sh 安装失败"; exit 1; }
 
+command -v socat >/dev/null 2>&1 || { say "安装 socat（TLS-ALPN 需要）"; apt-get update -qq && apt-get install -y -qq socat; }
+
 say "使用 Let's Encrypt"
 "$ACME" --set-default-ca --server letsencrypt
 
