@@ -201,3 +201,14 @@ ssh root@blog.pum.org.cn 'cd /srv/blog && \
 | 评论验证码一直错 | 服务器时间是否准确：`timedatectl` |
 | 上传大图 413 | nginx `client_max_body_size` 与 `UPLOAD_MAX_BYTES` 都要够 |
 | 磁盘涨得快 | `du -sh /srv/blog/media /srv/blog/backups`，调 `--keep` |
+
+## 只允许域名访问（禁止 IP 直接访问）
+
+`deploy/nginx-blog.conf` 开头有两个 `default_server`：未匹配 `blog.pum.org.cn` 的请求（包括直接用 IP 访问）一律 `return 444` 断开。更新配置后：
+
+```bash
+cd /srv/blog && git pull
+install -m 644 deploy/nginx-blog.conf /etc/nginx/sites-available/blog
+nginx -t && systemctl reload nginx
+curl -I http://<服务器IP>/      # 应连接被重置/无响应
+```
