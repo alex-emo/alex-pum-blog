@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import post_list, pagination_nav with context %}
+
+{% block title %}{{ heading or '搜索' }} · {{ settings.site_name }}{% endblock %}
+{% block description %}搜索「{{ keyword }}」的结果{% endblock %}
+
+{% block content %}
+<h1 class="page-heading">{{ heading or '搜索' }}</h1>
+
+{% if keyword %}
+  <p class="page-sub muted">
+    {% if total %}找到 {{ total }} 篇相关文章{% else %}没有找到相关文章{% endif %}
+  </p>
+  {% if posts %}
+    {{ post_list(posts) }}
+    {{ pagination_nav(pagination) }}
+  {% endif %}
+{% else %}
+  <p class="page-sub muted">输入关键词搜索标题和摘要。</p>
+{% endif %}
+{% endblock %}

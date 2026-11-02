@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.bak
+blog.db
+blog.db-*
+media/
+.pytest_cache/
+.DS_Store
+backups/
+.preview*
+.dev-server.log

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>登录 · {{ settings.site_name }}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body class="login-body" data-page="login" data-next="{{ next_url }}">
+  <main class="login-card">
+    <h1 class="login-title">{{ settings.site_name }}</h1>
+    <p class="login-sub muted">登录后可以写文章、审评论。</p>
+
+    <form id="login-form" novalidate>
+      <div class="field">
+        <label for="username">用户名</label>
+        <input id="username" name="username" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">密码</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary btn-block" id="login-submit">登录</button>
+      <p class="form-msg" id="login-msg" role="alert" aria-live="polite"></p>
+    </form>
+
+    <p class="login-footer"><a href="/">← 回到博客</a></p>
+  </main>
+
+  <script src="/static/js/api.js" defer></script>
+  <script src="/static/js/admin.js" defer></script>
+</body>
+</html>

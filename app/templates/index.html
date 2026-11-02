@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import post_list, pagination_nav with context %}
+
+{% block title %}{% if heading %}{{ heading }} · {% endif %}{{ settings.site_name }}{% endblock %}
+{% block description %}{% if heading %}{{ heading }} · {% endif %}{{ settings.site_description }}{% endblock %}
+
+{% block content %}
+{% if heading %}
+  <h1 class="page-heading">{{ heading }}</h1>
+{% endif %}
+
+{% if posts %}
+  {{ post_list(posts) }}
+  {{ pagination_nav(pagination) }}
+{% else %}
+  <div class="empty-state">
+    <p>这里还没有文章。</p>
+    {% if not heading %}
+      <p class="muted">先写点什么吧——<a href="/admin">进入后台</a>。</p>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

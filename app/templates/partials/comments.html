@@ -1,0 +1,73 @@
+<section id="comments" class="comments" data-slug="{{ post.slug }}">
+  <h2 class="comments-title">
+    评论
+    {% if comments %}<span class="comments-count">{{ comments|length }}</span>{% endif %}
+  </h2>
+
+  <div id="comment-list" class="comment-list">
+    {% for comment in comments %}
+    <article class="comment" id="comment-{{ comment.id }}">
+      <header class="comment-head">
+        <span class="comment-author">{{ comment.author_name }}</span>
+        <time class="comment-time" datetime="{{ comment.created_at|iso }}">{{ comment.created_at|dt_full }}</time>
+      </header>
+      <p class="comment-body">{{ comment.content }}</p>
+      <button type="button" class="comment-reply" data-parent="{{ comment.id }}" data-author="{{ comment.author_name }}">回复</button>
+
+      {% if comment.replies %}
+      <div class="comment-replies">
+        {% for reply in comment.replies %}
+        <article class="comment comment-reply-item" id="comment-{{ reply.id }}">
+          <header class="comment-head">
+            <span class="comment-author">{{ reply.author_name }}</span>
+            <time class="comment-time" datetime="{{ reply.created_at|iso }}">{{ reply.created_at|dt_full }}</time>
+          </header>
+          <p class="comment-body">{{ reply.content }}</p>
+        </article>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+
+    {% if not comments %}
+    <p class="comment-empty muted">还没有评论，来说两句？</p>
+    {% endif %}
+  </div>
+
+  <form id="comment-form" class="comment-form" novalidate>
+    <h3 class="comment-form-title">发表评论</h3>
+
+    <div class="field">
+      <label for="comment-author">昵称</label>
+      <input id="comment-author" name="author_name" type="text" maxlength="40" required autocomplete="nickname" placeholder="怎么称呼你">
+    </div>
+
+    <div class="field">
+      <label for="comment-content">内容</label>
+      <textarea id="comment-content" name="content" rows="5" maxlength="2000" required placeholder="说点什么…（支持纯文本）"></textarea>
+    </div>
+
+    <div class="field field-captcha">
+      <label for="comment-captcha">验证码</label>
+      <div class="captcha-row">
+        <img id="captcha-image" class="captcha-image" alt="验证码图片，点击刷新" width="120" height="40">
+        <input id="comment-captcha" name="captcha_answer" type="text" maxlength="10" required autocomplete="off" inputmode="latin" placeholder="输入图中字符">
+        <button type="button" id="captcha-refresh" class="btn-ghost">换一张</button>
+      </div>
+    </div>
+
+    {# 蜜罐：真实用户看不到，机器人会填 #}
+    <div class="honeypot" aria-hidden="true">
+      <label for="comment-website">网址</label>
+      <input id="comment-website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
+
+    <input type="hidden" name="parent_id" id="comment-parent" value="">
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" id="comment-submit">提交评论</button>
+      <span class="form-msg" id="comment-msg" role="status" aria-live="polite"></span>
+    </div>
+  </form>
+</section>

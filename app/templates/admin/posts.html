@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% block page %}posts{% endblock %}
+{% block title %}文章{% endblock %}
+{% block heading %}文章{% endblock %}
+{% block actions %}
+<a class="btn-primary" href="/admin/posts/new">写新文章</a>
+{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+  <div class="tabs" role="tablist" aria-label="按状态筛选">
+    <button type="button" class="tab is-active" data-status="">全部</button>
+    <button type="button" class="tab" data-status="published">已发布</button>
+    <button type="button" class="tab" data-status="draft">草稿</button>
+  </div>
+  <input type="search" id="post-search" class="input-inline" placeholder="搜索标题…" aria-label="搜索标题">
+</div>
+
+<div id="posts-table" class="table-wrap">
+  <p class="muted">加载中…</p>
+</div>
+
+<nav id="posts-pagination" class="pager" aria-label="分页"></nav>
+{% endblock %}

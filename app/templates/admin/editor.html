@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+{% block page %}editor{% endblock %}
+{% block title %}{% if post_id %}编辑文章{% else %}写新文章{% endif %}{% endblock %}
+{% block heading %}{% if post_id %}编辑文章{% else %}写新文章{% endif %}{% endblock %}
+{% block actions %}
+<span class="save-state" id="save-state"></span>
+<button type="button" class="btn-ghost" id="save-draft">存草稿</button>
+<button type="button" class="btn-primary" id="save-publish">发布</button>
+{% endblock %}
+
+{% block content %}
+<form id="editor-form" data-post-id="{{ post_id if post_id else '' }}" novalidate>
+  <div class="field">
+    <label for="post-title" class="sr-only">标题</label>
+    <input id="post-title" class="input-title" name="title" type="text" maxlength="200"
+           placeholder="文章标题" required autocomplete="off">
+  </div>
+
+  <div class="editor-layout">
+    <section class="editor-pane">
+      <div class="pane-head">
+        <span class="pane-label">Markdown</span>
+        <span class="pane-hint muted">支持粘贴/拖拽图片，Ctrl+S 保存</span>
+      </div>
+      <textarea id="post-content" class="editor-textarea" name="content_md" spellcheck="false"
+                placeholder="# 标题&#10;&#10;开始写吧…"></textarea>
+    </section>
+
+    <section class="preview-pane">
+      <div class="pane-head">
+        <span class="pane-label">预览</span>
+        <span class="pane-hint muted" id="preview-state"></span>
+      </div>
+      <div id="post-preview" class="prose preview-body">
+        <p class="muted">预览会显示在这里。</p>
+      </div>
+    </section>
+  </div>
+
+  <details class="meta-panel">
+    <summary>文章设置</summary>
+    <div class="meta-grid">
+      <div class="field">
+        <label for="post-slug">URL 别名</label>
+        <input id="post-slug" name="slug" type="text" maxlength="200" placeholder="留空则按标题自动生成（中文转拼音）">
+      </div>
+      <div class="field">
+        <label for="post-summary">摘要</label>
+        <textarea id="post-summary" name="summary" rows="2" maxlength="500"
+                  placeholder="留空则取正文开头，显示在列表和分享卡片"></textarea>
+      </div>
+      <div class="field">
+        <label for="post-tags">标签</label>
+        <input id="post-tags" name="tags" type="text" placeholder="用逗号分隔，例如：Python, 折腾">
+      </div>
+      <div class="field">
+        <label for="post-cover">封面图 URL</label>
+        <input id="post-cover" name="cover_image" type="text" maxlength="300" placeholder="可选，例如 /media/2026/11/xxx.webp">
+      </div>
+    </div>
+  </details>
+
+  <div class="editor-footer">
+    <span class="muted" id="post-note"></span>
+    <button type="button" class="btn-ghost" id="delete-post" hidden>删除文章</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/editor.js" defer></script>
+{% endblock %}

@@ -1,0 +1,16 @@
+[Unit]
+Description=备份博客数据库与媒体文件
+After=network.target
+
+[Service]
+Type=oneshot
+User=blog
+Group=blog
+WorkingDirectory=/srv/blog
+EnvironmentFile=/srv/blog/.env
+ExecStart=/srv/blog/venv/bin/python -m scripts.backup --keep 14
+ReadWritePaths=/srv/blog
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true

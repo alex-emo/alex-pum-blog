@@ -1,0 +1,11 @@
+[Unit]
+Description=每天凌晨备份博客
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+# 机器重启后补跑一次漏掉的
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

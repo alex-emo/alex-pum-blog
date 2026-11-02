@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}标签 · {{ settings.site_name }}{% endblock %}
+{% block description %}按标签浏览文章 · {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<h1 class="page-heading">标签</h1>
+<p class="page-sub muted">共 {{ tags|length }} 个标签，{{ total }} 篇文章。</p>
+
+{% if tags %}
+<ul class="tag-cloud">
+  {% for tag in tags %}
+  <li>
+    <a class="tag-card" href="{{ tag.slug|tag_url }}">
+      <span class="tag-name">{{ tag.name }}</span>
+      <span class="tag-count">{{ tag.post_count }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state"><p>还没有标签。</p></div>
+{% endif %}
+{% endblock %}

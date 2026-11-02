@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block page %}comments{% endblock %}
+{% block title %}评论{% endblock %}
+{% block heading %}评论{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+  <div class="tabs" role="tablist" aria-label="按状态筛选">
+    <button type="button" class="tab is-active" data-status="pending">待审</button>
+    <button type="button" class="tab" data-status="approved">已通过</button>
+    <button type="button" class="tab" data-status="spam">已拒绝</button>
+    <button type="button" class="tab" data-status="">全部</button>
+  </div>
+</div>
+
+<div id="comments-list" class="comment-admin-list">
+  <p class="muted">加载中…</p>
+</div>
+
+<nav id="comments-pagination" class="pager" aria-label="分页"></nav>
+{% endblock %}

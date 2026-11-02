@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} · {{ settings.site_name }}{% endblock %}
+{% block description %}{{ message }}{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <p class="error-code">{{ code }}</p>
+  <h1 class="error-message">{{ message }}</h1>
+  <p class="muted">可能是链接过期、文章被删除，或者地址输错了。</p>
+  <div class="error-actions">
+    <a class="btn-primary" href="/">回首页</a>
+    <a class="btn-ghost" href="/tags">看看标签</a>
+  </div>
+</div>
+{% endblock %}

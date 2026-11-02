@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}后台{% endblock %} · {{ settings.site_name }}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="stylesheet" href="/static/css/pygments.css">
+  {% block head %}{% endblock %}
+</head>
+<body data-page="{% block page %}{% endblock %}">
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <a class="admin-brand" href="/admin">
+      <span aria-hidden="true">¶</span>
+      <span>{{ settings.site_name }}</span>
+    </a>
+    <nav class="admin-nav" aria-label="后台导航">
+      <a href="/admin" {% if nav == 'dashboard' %}aria-current="page"{% endif %}>仪表盘</a>
+      <a href="/admin/posts" {% if nav == 'posts' %}aria-current="page"{% endif %}>文章</a>
+      <a href="/admin/comments" {% if nav == 'comments' %}aria-current="page"{% endif %}>
+        评论<span class="nav-badge" id="pending-badge" hidden></span>
+      </a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <a href="/" target="_blank" rel="noopener">查看站点 ↗</a>
+      <button type="button" class="link-button" id="logout-btn">退出登录</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <h1>{% block heading %}{% endblock %}</h1>
+      <div class="admin-topbar-actions">{% block actions %}{% endblock %}</div>
+    </header>
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="/static/js/api.js" defer></script>
+<script src="/static/js/admin.js" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% block page %}dashboard{% endblock %}
+{% block title %}仪表盘{% endblock %}
+{% block heading %}仪表盘{% endblock %}
+{% block actions %}
+<a class="btn-primary" href="/admin/posts/new">写新文章</a>
+{% endblock %}
+
+{% block content %}
+<section class="stat-grid" id="stat-grid">
+  <div class="stat-card"><span class="stat-label">文章总数</span><strong class="stat-value" id="stat-posts">–</strong></div>
+  <div class="stat-card"><span class="stat-label">已发布</span><strong class="stat-value" id="stat-published">–</strong></div>
+  <div class="stat-card"><span class="stat-label">草稿</span><strong class="stat-value" id="stat-drafts">–</strong></div>
+  <div class="stat-card"><span class="stat-label">待审评论</span><strong class="stat-value" id="stat-pending">–</strong></div>
+  <div class="stat-card"><span class="stat-label">总阅读量</span><strong class="stat-value" id="stat-views">–</strong></div>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>最近文章</h2>
+    <a class="link" href="/admin/posts">全部 →</a>
+  </div>
+  <div id="recent-posts" class="recent-list">
+    <p class="muted">加载中…</p>
+  </div>
+</section>
+{% endblock %}

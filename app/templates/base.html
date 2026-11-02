@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ settings.site_name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ settings.site_description }}{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ settings.site_url }}{{ request.url.path }}{% endblock %}">
+  <meta name="author" content="{{ settings.site_author }}">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:site_name" content="{{ settings.site_name }}">
+  <meta property="og:title" content="{% block og_title %}{{ settings.site_name }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ settings.site_description }}{% endblock %}">
+  <meta property="og:url" content="{{ settings.site_url }}{{ request.url.path }}">
+
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="{{ settings.site_name }}" href="/rss.xml">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/pygments.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">¶</span>
+      <span>{{ settings.site_name }}</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="/" {% if url_path == '/' %}aria-current="page"{% endif %}>文章</a>
+      <a href="/tags" {% if url_path.startswith('/tags') or url_path.startswith('/tag/') %}aria-current="page"{% endif %}>标签</a>
+      <a href="/rss.xml">RSS</a>
+    </nav>
+    <form class="site-search" action="/search" method="get" role="search">
+      <input type="search" name="q" value="{{ keyword|default('') }}" placeholder="搜索文章…" aria-label="搜索文章" required>
+      <button type="submit" aria-label="搜索">搜索</button>
+    </form>
+  </div>
+</header>
+
+<main id="main" class="wrap main">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© {{ settings.site_author }} · 保留所有权利</p>
+    <p class="footer-links">
+      <a href="/rss.xml">RSS</a>
+      <a href="/sitemap.xml">Sitemap</a>
+      <a href="/admin">管理</a>
+    </p>
+  </div>
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>
