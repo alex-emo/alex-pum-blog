@@ -213,3 +213,17 @@ install -m 644 deploy/nginx-blog.conf /etc/nginx/sites-available/blog
 nginx -t && systemctl reload nginx
 curl -I http://<服务器IP>/      # 应连接被重置/无响应
 ```
+
+## 80 被备案拦截时：DNS-01 签发（阿里云 DNS）
+
+阿里云对「未接入备案」的域名会在 80 端口返回 `Server: Beaver` 的 403，HTTP-01 无法完成。改用 DNS-01，不依赖 80：
+
+1. 阿里云 RAM 建子账号（勾选 OpenAPI 调用），授权 `AliyunDNSFullAccess`（更稳妥是自定义策略只允许改 `pum.org.cn`）
+2. 服务器上执行（AK 不要提交到仓库）：
+
+```bash
+cd /srv/blog && git pull
+Ali_Key=<AccessKeyId> Ali_Secret=<AccessKeySecret> bash deploy/setup-dns-cert.sh
+```
+
+证书装到 `/etc/letsencrypt/live/blog.pum.org.cn/`（nginx 已在用这两个路径），acme.sh 自带每日续期与 reload。之后仍建议把备案接入阿里云，80 才能正常跳转 HTTPS。
