@@ -4,20 +4,20 @@
 
 /* ============================================================ 后台样式 */
 :root {
-  --bg: #f6f6f4;
+  --bg: #f5f8fc;
   --bg-elevated: #ffffff;
-  --fg: #1f1e1c;
-  --fg-muted: #6f6b63;
-  --fg-faint: #9c978e;
-  --border: #e3e1da;
-  --accent: #b4530a;
-  --accent-strong: #8f3f04;
-  --accent-soft: #fdf1e4;
-  --danger: #b3261e;
-  --ok: #1e7a3c;
+  --fg: #16202b;
+  --fg-muted: #5b6b7c;
+  --fg-faint: #8b9cb0;
+  --border: #dde5ef;
+  --accent: #2f6fed;
+  --accent-strong: #1b53c4;
+  --accent-soft: #e8efff;
+  --danger: #c0392b;
+  --ok: #1e7a4d;
   --radius: 10px;
   --radius-sm: 6px;
-  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.05);
+  --shadow: none;
   --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
   --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
@@ -25,18 +25,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #141418;
-    --bg-elevated: #1c1c21;
-    --fg: #e9e7e2;
-    --fg-muted: #a19d95;
-    --fg-faint: #6f6b64;
-    --border: #34343c;
-    --accent: #f0a35e;
-    --accent-strong: #ffbd7f;
-    --accent-soft: #2a2118;
+    --bg: #0f141a;
+    --bg-elevated: #151c24;
+    --fg: #e6edf6;
+    --fg-muted: #9cadc1;
+    --fg-faint: #6f8299;
+    --border: #26313d;
+    --accent: #7aa7ff;
+    --accent-strong: #a9c5ff;
+    --accent-soft: #182739;
     --danger: #ff8b80;
     --ok: #5fca8a;
-    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.3);
+    --shadow: none;
   }
 }
 
@@ -291,7 +291,7 @@ table.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 
 /* ============================================================ 响应式 */
 @media (max-width: 900px) {
-  .admin-shell { grid-template-columns: 1fr; }
+  .admin-shell { grid-template-columns: 1fr; min-height: 0; align-content: start; }
   .admin-sidebar {
     position: static; height: auto; flex-direction: row; align-items: center;
     gap: .75rem; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border);

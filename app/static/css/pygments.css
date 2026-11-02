@@ -75,7 +75,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .codehilite .vm { color: #BB60D5 } /* Name.Variable.Magic */
 .codehilite .il { color: #40A070 } /* Literal.Number.Integer.Long */
 
-@media (prefers-color-scheme: dark) {
+html[data-theme="dark"] {
   /* 深色主题 */
   pre { line-height: 125%; }
   td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }

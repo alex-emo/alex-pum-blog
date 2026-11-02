@@ -85,4 +85,7 @@ venv/bin/python -m scripts.backup --keep 14
 | `COOKIE_SECURE` | HTTPS 部署置 1 |
 | `DEBUG` | 生产置 0，关闭 `/api/docs` |
 | `SITE_URL` | 用于 RSS / sitemap / 分享卡片绝对地址 |
+| `SITE_SIGNATURE` | 侧栏一句话签名 |
+| `SITE_AVATAR` | 侧栏头像地址，默认 `/static/img/avatar.png` |
+| `SITE_EMAIL` / `SITE_X` / `SITE_TELEGRAM` | 侧栏联系方式（邮箱 / X 用户名 / Telegram 用户名） |
 | `COMMENT_REQUIRE_APPROVAL` | 1=先进待审；0=直接显示（本项目本地用 0） |

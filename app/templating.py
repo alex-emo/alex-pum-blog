@@ -12,8 +12,11 @@ from urllib.parse import urlencode
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from sqlalchemy import func, select
 
 from app.config import settings
+from app.database import SessionLocal
+from app import models
 from app.utils.text import reading_minutes
 from app.utils.timez import format_dt, format_dt_full, isoformat_local
 
@@ -60,6 +63,27 @@ class Pagination:
             pages.append(None)
         pages.append(total)
         return pages
+
+
+def site_stats() -> dict[str, int]:
+    """侧栏用：已发布文章数、有文章的标签数。每页两次 COUNT，SQLite 下开销可忽略。"""
+    try:
+        with SessionLocal() as db:
+            posts = db.scalar(
+                select(func.count(models.Post.id)).where(
+                    models.Post.status == models.PostStatus.PUBLISHED
+                )
+            ) or 0
+            tags = db.scalar(
+                select(func.count(func.distinct(models.Tag.id)))
+                .select_from(models.Tag)
+                .join(models.post_tags, models.post_tags.c.tag_id == models.Tag.id)
+                .join(models.Post, models.Post.id == models.post_tags.c.post_id)
+                .where(models.Post.status == models.PostStatus.PUBLISHED)
+            ) or 0
+    except Exception:  # 迁移尚未跑完时不要让页面 500
+        return {"posts": 0, "tags": 0}
+    return {"posts": posts, "tags": tags}
 
 
 def page_url(request: Request, base_path: str, number: int) -> str:
@@ -118,6 +142,7 @@ def render(
         "settings": settings,
         "url_path": request.url.path,
         "query": dict(request.query_params),
+        "stats": site_stats(),
         **context,
     }
     html = templates.get_template(name).render(**ctx)

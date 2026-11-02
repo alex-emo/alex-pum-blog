@@ -3,18 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* 主题三态：首屏渲染前定好 data-theme，避免闪白/闪黑 */
+    (function () {
+      try {
+        var mode = localStorage.getItem("theme-mode") || "auto";
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = mode === "auto" ? (dark ? "dark" : "light") : mode;
+        document.documentElement.dataset.themeMode = mode;
+      } catch (e) {
+        document.documentElement.dataset.theme = "light";
+        document.documentElement.dataset.themeMode = "auto";
+      }
+    })();
+  </script>
   <title>{% block title %}{{ settings.site_name }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ settings.site_description }}{% endblock %}">
   <link rel="canonical" href="{% block canonical %}{{ settings.site_url }}{{ request.url.path }}{% endblock %}">
   <meta name="author" content="{{ settings.site_author }}">
-  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16161a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
 
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="{{ settings.site_name }}">
   <meta property="og:title" content="{% block og_title %}{{ settings.site_name }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ settings.site_description }}{% endblock %}">
   <meta property="og:url" content="{{ settings.site_url }}{{ request.url.path }}">
+  {% block og_image %}{% endblock %}
 
   <link rel="icon" href="{{ asset_url('/static/favicon.svg') }}" type="image/svg+xml">
   <link rel="alternate" type="application/rss+xml" title="{{ settings.site_name }}" href="/rss.xml">
@@ -22,7 +37,7 @@
   <link rel="stylesheet" href="{{ asset_url('/static/css/pygments.css') }}">
   {% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 <a class="skip-link" href="#main">跳到正文</a>
 
 <header class="site-header">
@@ -36,20 +51,26 @@
       <a href="/tags" {% if url_path.startswith('/tags') or url_path.startswith('/tag/') %}aria-current="page"{% endif %}>标签</a>
       <a href="/rss.xml">RSS</a>
     </nav>
-    <form class="site-search" action="/search" method="get" role="search">
-      <input type="search" name="q" value="{{ keyword|default('') }}" placeholder="搜索文章…" aria-label="搜索文章" required>
-      <button type="submit" aria-label="搜索">搜索</button>
-    </form>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="切换主题（当前：跟随系统）" title="切换主题：跟随系统">
+      <svg class="icon icon-auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/><path d="M12 8.2a3.8 3.8 0 0 0 0 7.6z" fill="currentColor"/></svg>
+      <svg class="icon icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+      <svg class="icon icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/></svg>
+    </button>
   </div>
 </header>
 
 <main id="main" class="wrap main">
-  {% block content %}{% endblock %}
+  <div class="layout">
+    {% include "partials/profile_card.html" %}
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
 </main>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p>© {{ settings.site_author }} · 保留所有权利</p>
+    <p>© {{ settings.site_author }}</p>
     <p class="footer-links">
       <a href="/rss.xml">RSS</a>
       <a href="/sitemap.xml">Sitemap</a>
@@ -57,6 +78,7 @@
     </p>
   </div>
 </footer>
+<script src="{{ asset_url('/static/js/theme.js') }}" defer></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

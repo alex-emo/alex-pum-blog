@@ -40,6 +40,13 @@ class Settings:
         )
         self.site_url: str = os.getenv("SITE_URL", "https://blog.pum.org.cn").rstrip("/")
         self.site_author: str = os.getenv("SITE_AUTHOR", "Pum")
+        self.site_signature: str = os.getenv(
+            "SITE_SIGNATURE", "我们必须相信西西弗斯是自由的。"
+        )
+        self.site_avatar: str = os.getenv("SITE_AVATAR", "/static/img/avatar.png")
+        self.site_email: str = os.getenv("SITE_EMAIL", "alex12141327@163.com")
+        self.site_x: str = os.getenv("SITE_X", "ParameciumAlex")  # X / Twitter 用户名
+        self.site_telegram: str = os.getenv("SITE_TELEGRAM", "praeity")
         self.site_timezone: str = os.getenv("SITE_TIMEZONE", "Asia/Shanghai")
 
         # ---- 数据库 / 媒体 ----

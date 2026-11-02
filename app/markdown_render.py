@@ -44,14 +44,14 @@ def render_with_toc(text: str) -> tuple[str, str]:
 
 
 def pygments_css(light_style: str = "friendly", dark_style: str = "one-dark") -> str:
-    """生成代码高亮 CSS：浅色一套 + prefers-color-scheme: dark 覆盖一套。
+    """生成代码高亮 CSS：浅色为默认，深色挂在 html[data-theme="dark"] 下。
 
-    部署时写到静态文件里，页面只引用一次。
+    主题由前端三态开关控制（data-theme），所以不能再用 prefers-color-scheme。
     """
     light = HtmlFormatter(style=light_style).get_style_defs(".codehilite")
     dark = HtmlFormatter(style=dark_style).get_style_defs(".codehilite")
     dark_block = "\n".join("  " + line if line.strip() else line for line in dark.splitlines())
     return (
         "/* 浅色主题 */\n" + light + "\n\n"
-        "@media (prefers-color-scheme: dark) {\n  /* 深色主题 */\n" + dark_block + "\n}\n"
+        'html[data-theme="dark"] {\n  /* 深色主题 */\n' + dark_block + "\n}\n"
     )

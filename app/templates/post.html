@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 
+{% block body_class %}post-page{% endblock %}
 {% block title %}{{ post.title }} · {{ settings.site_name }}{% endblock %}
 {% block description %}{{ post.summary }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}{{ post.title }}{% endblock %}
 {% block og_description %}{{ post.summary }}{% endblock %}
 {% block canonical %}{{ settings.site_url }}/{{ post.slug }}{% endblock %}
+{% block og_image %}{% if post.cover_image %}<meta property="og:image" content="{{ settings.site_url }}{{ post.cover_image }}">{% endif %}{% endblock %}
 
 {% block content %}
 <article class="post">
   <header class="post-header">
+    {% if post.tags %}
+    <p class="post-kicker">
+      {% for tag in post.tags %}
+        <a class="tag" href="{{ tag.slug|tag_url }}">{{ tag.name }}</a>
+      {% endfor %}
+    </p>
+    {% endif %}
     <h1 class="post-title">{{ post.title }}</h1>
     <p class="post-meta">
       <time datetime="{{ (post.published_at or post.created_at)|iso }}">{{ (post.published_at or post.created_at)|dt }}</time>
@@ -17,42 +26,47 @@
       <span>{{ post.content_md|reading_minutes }} 分钟</span>
       <span class="dot" aria-hidden="true">·</span>
       <span>{{ post.views }} 次阅读</span>
-      {% for tag in post.tags %}
-        <a class="tag" href="{{ tag.slug|tag_url }}">{{ tag.name }}</a>
-      {% endfor %}
     </p>
   </header>
 
-  {% if toc %}
-  <details class="toc" open>
-    <summary>目录</summary>
-    {{ toc|safe }}
-  </details>
+  {% if post.cover_image %}
+  <figure class="post-hero">
+    <img src="{{ post.cover_image }}" alt="{{ post.title }} 的封面图">
+  </figure>
   {% endif %}
 
-  <div class="prose">
-    {{ post.content_html|safe }}
+  <div class="post-body">
+    {% if toc %}
+    <details class="toc-box" open>
+      <summary>目录</summary>
+      <div class="toc-body">{{ toc|safe }}</div>
+    </details>
+    {% endif %}
+
+    <div class="prose">
+      {{ post.content_html|safe }}
+    </div>
+
+    <footer class="post-footer">
+      <nav class="post-neighbors" aria-label="上下篇">
+        {% if prev %}
+          <a class="neighbor prev" href="{{ prev.slug|post_url }}">
+            <span class="neighbor-label">上一篇</span>
+            <span class="neighbor-title">{{ prev.title }}</span>
+          </a>
+        {% else %}<span></span>{% endif %}
+        {% if next %}
+          <a class="neighbor next" href="{{ next.slug|post_url }}">
+            <span class="neighbor-label">下一篇</span>
+            <span class="neighbor-title">{{ next.title }}</span>
+          </a>
+        {% endif %}
+      </nav>
+    </footer>
+
+    {% include "partials/comments.html" %}
   </div>
-
-  <footer class="post-footer">
-    <nav class="post-neighbors" aria-label="上下篇">
-      {% if prev %}
-        <a class="neighbor prev" href="{{ prev.slug|post_url }}">
-          <span class="neighbor-label">上一篇</span>
-          <span class="neighbor-title">{{ prev.title }}</span>
-        </a>
-      {% else %}<span></span>{% endif %}
-      {% if next %}
-        <a class="neighbor next" href="{{ next.slug|post_url }}">
-          <span class="neighbor-label">下一篇</span>
-          <span class="neighbor-title">{{ next.title }}</span>
-        </a>
-      {% endif %}
-    </nav>
-  </footer>
 </article>
-
-{% include "partials/comments.html" %}
 {% endblock %}
 
 {% block scripts %}
