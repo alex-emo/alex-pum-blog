@@ -138,6 +138,7 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 .content { min-width: 0; }
 
 /* ============================================================ 侧栏个人卡 */
+.profile-toggle { display: none; }
 .sidebar { position: sticky; top: calc(var(--header-h) + 1.5rem); }
 .profile-card {
   padding: 1.75rem 1.5rem;
@@ -204,6 +205,7 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 }
 .profile-links a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
 .profile-links svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.profile-links svg.fill-icon { fill: currentColor; stroke: none; }
 
 /* ============================================================ 列表页标题 */
 .page-heading { font-family: var(--font-serif); font-size: 1.85rem; margin-bottom: .3rem; }
@@ -446,9 +448,31 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 @media (max-width: 900px) {
   .layout { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
   .sidebar { position: static; }
-  .profile-card { padding: 1.25rem 1.35rem; }
+  .profile-card { padding: .8rem 1rem; }
+  .profile-toggle {
+    display: flex; align-items: center; gap: .7rem;
+    cursor: pointer; list-style: none;
+  }
+  .profile-toggle::-webkit-details-marker { display: none; }
+  .profile-toggle::marker { content: ""; }
+  .profile-toggle img {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid var(--border); flex: none;
+  }
+  .pt-name { font-family: var(--font-serif); font-weight: 600; font-size: 1rem; }
+  .pt-chevron {
+    width: 18px; height: 18px; margin-left: auto; flex: none;
+    color: var(--fg-faint); fill: none; stroke: currentColor;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    transition: transform .2s ease;
+  }
+  .profile-card[open] .pt-chevron { transform: rotate(180deg); }
+  .profile-body { margin-top: 1rem; }
   .profile-top { flex-direction: row; text-align: left; gap: .9rem; }
   .avatar { width: 60px; height: 60px; }
+  /* 展开时标题栏已有头像和站名，卡片内不再重复 */
+  .profile-body .avatar, .profile-body .profile-name { display: none; }
+  .profile-top { margin-bottom: .4rem; }
   .profile-stats { margin-top: 1rem; padding-top: .8rem; }
   .profile-search { margin-top: 1rem; }
 }

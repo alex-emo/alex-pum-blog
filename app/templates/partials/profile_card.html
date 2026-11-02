@@ -1,50 +1,71 @@
-{# 左栏个人卡：桌面 sticky，移动端压缩成一张横卡 #}
+{# 左栏个人卡：桌面 sticky；窄屏收起为一条可展开的横条 #}
 <aside class="sidebar">
-  <div class="profile-card">
-    <div class="profile-top">
-      <img class="avatar" src="{{ asset_url(settings.site_avatar) }}" alt="" width="96" height="96" loading="lazy">
-      <div class="profile-identity">
-        <a class="profile-name" href="/">{{ settings.site_name }}</a>
-        <p class="profile-signature">{{ settings.site_signature }}</p>
+  <details class="profile-card" id="profile-card" open>
+    <summary class="profile-toggle">
+      <img src="{{ asset_url(settings.site_avatar) }}" alt="" width="36" height="36" loading="lazy">
+      <span class="pt-name">{{ settings.site_name }}</span>
+      <svg class="pt-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+
+    <div class="profile-body">
+      <div class="profile-top">
+        <img class="avatar" src="{{ asset_url(settings.site_avatar) }}" alt="" width="96" height="96" loading="lazy">
+        <div class="profile-identity">
+          <a class="profile-name" href="/">{{ settings.site_name }}</a>
+          <p class="profile-signature">{{ settings.site_signature }}</p>
+        </div>
+      </div>
+
+      <dl class="profile-stats">
+        <div>
+          <dt>文章</dt>
+          <dd><a href="/">{{ stats.posts }}</a></dd>
+        </div>
+        <div>
+          <dt>标签</dt>
+          <dd><a href="/tags">{{ stats.tags }}</a></dd>
+        </div>
+      </dl>
+
+      <form class="profile-search" action="/search" method="get" role="search">
+        <label class="sr-only" for="sidebar-q">搜索文章</label>
+        <input id="sidebar-q" type="search" name="q" value="{{ keyword|default('') }}" placeholder="搜索文章…" required>
+        <button type="submit" aria-label="搜索">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>
+        </button>
+      </form>
+
+      <div class="profile-actions">
+        <a class="rss-btn" href="/rss.xml">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="1.6" fill="currentColor"/><path d="M4 11a9 9 0 0 1 9 9M4 4.5a15.5 15.5 0 0 1 15.5 15.5"/></svg>
+          <span class="rss-label">RSS 订阅</span>
+        </a>
+
+        <div class="profile-links">
+          <a href="mailto:{{ settings.site_email }}" aria-label="邮箱：{{ settings.site_email }}" title="{{ settings.site_email }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.8 7 12 13.2 20.2 7"/></svg>
+          </a>
+          <a href="https://x.com/{{ settings.site_x }}" target="_blank" rel="noopener me" aria-label="X：@{{ settings.site_x }}" title="X：@{{ settings.site_x }}">
+            <svg class="fill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.4l-5.8-7.59-6.64 7.59H.47l8.6-9.83L0 1.15h7.59l5.25 6.93 6.06-6.93Zm-1.29 19.49h2.04L6.49 3.24H4.3l13.31 17.4Z"/></svg>
+          </a>
+          <a href="https://t.me/{{ settings.site_telegram }}" target="_blank" rel="noopener" aria-label="Telegram：@{{ settings.site_telegram }}" title="Telegram：@{{ settings.site_telegram }}">
+            <svg class="fill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.94 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.06 0Zm4.96 7.22c.1 0 .32.02.46.14a.5.5 0 0 1 .18.33c.01.09.03.3.02.47-.18 1.9-.96 6.5-1.36 8.63-.17.9-.5 1.2-.82 1.23-.7.06-1.23-.46-1.9-.9-1.06-.7-1.65-1.13-2.68-1.8-1.18-.79-.42-1.21.26-1.92.17-.18 3.24-2.97 3.3-3.23.01-.03.02-.15-.05-.21-.07-.06-.18-.04-.25-.02-.1.02-1.79 1.14-5.06 3.34-.48.33-.91.5-1.3.48-.43 0-1.25-.24-1.86-.44-.76-.24-1.35-.37-1.3-.79.03-.21.33-.43.89-.66 3.5-1.52 5.83-2.53 7-3.01 3.33-1.39 4.02-1.63 4.47-1.64Z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
-
-    <dl class="profile-stats">
-      <div>
-        <dt>文章</dt>
-        <dd><a href="/">{{ stats.posts }}</a></dd>
-      </div>
-      <div>
-        <dt>标签</dt>
-        <dd><a href="/tags">{{ stats.tags }}</a></dd>
-      </div>
-    </dl>
-
-    <form class="profile-search" action="/search" method="get" role="search">
-      <label class="sr-only" for="sidebar-q">搜索文章</label>
-      <input id="sidebar-q" type="search" name="q" value="{{ keyword|default('') }}" placeholder="搜索文章…" required>
-      <button type="submit" aria-label="搜索">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>
-      </button>
-    </form>
-
-    <div class="profile-actions">
-      <a class="rss-btn" href="/rss.xml">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="1.6" fill="currentColor"/><path d="M4 11a9 9 0 0 1 9 9M4 4.5a15.5 15.5 0 0 1 15.5 15.5"/></svg>
-        RSS 订阅
-      </a>
-
-      <div class="profile-links">
-        <a href="mailto:{{ settings.site_email }}" aria-label="邮箱：{{ settings.site_email }}" title="{{ settings.site_email }}">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.8 7 12 13.2 20.2 7"/></svg>
-        </a>
-        <a href="https://x.com/{{ settings.site_x }}" target="_blank" rel="noopener me" aria-label="X：@{{ settings.site_x }}" title="X：@{{ settings.site_x }}">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5 19.5 19.5M19.5 4.5 4.5 19.5"/></svg>
-        </a>
-        <a href="https://t.me/{{ settings.site_telegram }}" target="_blank" rel="noopener" aria-label="Telegram：@{{ settings.site_telegram }}" title="Telegram：@{{ settings.site_telegram }}">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3.5 11.2l5.3 1.9L11 20l3.2-4.7 5.2 3.5z"/><path d="M8.8 13.1 21 4"/></svg>
-        </a>
-      </div>
-    </div>
-  </div>
+  </details>
 </aside>
+
+<script>
+  /* 窄屏默认收起；宽窄切换时自动展开/收起 */
+  (function () {
+    var card = document.getElementById("profile-card");
+    if (!card) return;
+    var mq = window.matchMedia("(max-width: 900px)");
+    if (mq.matches) card.open = false;
+    mq.addEventListener("change", function (event) {
+      card.open = !event.matches;
+    });
+  })();
+</script>
