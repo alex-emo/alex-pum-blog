@@ -52,10 +52,12 @@ venv/bin/uvicorn app.main:app --port 8010 --reload
 
 打开 <http://127.0.0.1:8010>，后台在 `/admin`。
 
-冒烟测试（会自己建/删测试文章，不要在生产库上跑）：
+测试（都在临时库上跑，不碰 `blog.db`）：
 
 ```bash
-venv/bin/python -m scripts.smoke_test
+venv/bin/pip install -r requirements-dev.txt
+venv/bin/python -m pytest            # 11 项关键链路测试，约 2 秒
+venv/bin/python -m scripts.smoke_test # 30 项浏览器/接口冒烟
 ```
 
 ## 常用操作

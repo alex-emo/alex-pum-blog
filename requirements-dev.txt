@@ -1,0 +1,3 @@
+# 仅开发/CI 用：从生产 requirements 安装后再装这份
+-r requirements.txt
+pytest==9.2.0

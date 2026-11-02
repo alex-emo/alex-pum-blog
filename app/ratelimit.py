@@ -40,5 +40,10 @@ class RateLimiter:
         with self._lock:
             self._hits.pop(key, None)
 
+    def clear(self) -> None:
+        """清空所有计数（测试用）。"""
+        with self._lock:
+            self._hits.clear()
+
 
 rate_limiter = RateLimiter()
