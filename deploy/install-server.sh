@@ -20,13 +20,16 @@ say() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
 die() { printf '\033[1;31m错误: %s\033[0m\n' "$*" >&2; exit 1; }
 
 [ "$(id -u)" -eq 0 ] || die "请用 root 运行"
+
+# 部分精简镜像 root 的 PATH 不含 /usr/sbin、/sbin（useradd/swapon 找不到）
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 [ -f "$APP_DIR/app/main.py" ] || die "代码不在 $APP_DIR，请先 git clone 到该目录"
 command -v apt-get >/dev/null || die "只支持 Debian/Ubuntu"
 
 say "1/9 安装系统依赖"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq python3 python3-venv python3-pip nginx sqlite3 rsync ufw certbot curl sudo
+apt-get install -y -qq python3 python3-venv python3-pip nginx sqlite3 rsync ufw certbot curl sudo util-linux passwd
 
 say "2/9 内存不足 2G 时加 swap"
 if ! swapon --show | grep -q .; then
