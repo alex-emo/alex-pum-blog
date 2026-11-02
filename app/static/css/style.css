@@ -60,6 +60,9 @@ html[data-theme="dark"] { color-scheme: dark; }
 
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
@@ -130,7 +133,7 @@ html[data-theme-mode="light"] .theme-toggle .icon-light,
 html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 
 /* ============================================================ 主体布局 */
-.main { padding-top: 2.25rem; padding-bottom: 4rem; min-height: 65vh; }
+.main { flex: 1 0 auto; padding-top: 2.25rem; padding-bottom: 4rem; }
 .layout {
   display: grid; grid-template-columns: 280px minmax(0, 1fr);
   gap: 2.5rem; align-items: start;
@@ -437,7 +440,7 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 .error-actions { display: flex; gap: .75rem; justify-content: center; margin-top: 1.5rem; }
 
 /* ============================================================ 页脚 */
-.site-footer { border-top: 1px solid var(--border); padding: 2rem 0; font-size: .84rem; color: var(--fg-faint); }
+.site-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 2rem 0; font-size: .84rem; color: var(--fg-faint); }
 .footer-inner { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .footer-inner p { margin: 0; }
 .footer-links { display: flex; gap: 1rem; }
