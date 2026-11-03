@@ -139,13 +139,13 @@ img { max-width: 100%; }
 .stat-card {
   display: flex; flex-direction: column; gap: .25rem;
   padding: 1rem 1.1rem; background: var(--bg-elevated);
-  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+  border-radius: var(--radius); box-shadow: var(--shadow);
 }
 .stat-label { font-size: .8rem; color: var(--fg-muted); }
 .stat-value { font-size: 1.6rem; font-weight: 700; }
 
 .panel {
-  background: var(--bg-elevated); border: 1px solid var(--border);
+  background: var(--bg-elevated);
   border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.2rem 1.3rem;
 }
 .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
@@ -166,7 +166,7 @@ img { max-width: 100%; }
 
 /* ============================================================ 表格 */
 .table-wrap {
-  background: var(--bg-elevated); border: 1px solid var(--border);
+  background: var(--bg-elevated);
   border-radius: var(--radius); box-shadow: var(--shadow); overflow-x: auto;
 }
 table.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
@@ -205,7 +205,7 @@ table.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 /* ============================================================ 编辑器 */
 .editor-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
 .editor-pane, .preview-pane {
-  background: var(--bg-elevated); border: 1px solid var(--border);
+  background: var(--bg-elevated);
   border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
 }
 .pane-head {
@@ -231,7 +231,7 @@ table.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 .input-title:focus { outline: none; border-color: var(--accent); }
 
 .meta-panel {
-  margin-top: 1rem; background: var(--bg-elevated); border: 1px solid var(--border);
+  margin-top: 1rem; background: var(--bg-elevated);
   border-radius: var(--radius); padding: .8rem 1rem;
 }
 .meta-panel summary { cursor: pointer; font-size: .9rem; color: var(--fg-muted); font-weight: 600; }
@@ -259,7 +259,7 @@ table.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 /* ============================================================ 评论管理 */
 .comment-admin-list { display: flex; flex-direction: column; gap: .8rem; }
 .comment-card {
-  background: var(--bg-elevated); border: 1px solid var(--border);
+  background: var(--bg-elevated);
   border-radius: var(--radius); box-shadow: var(--shadow); padding: .9rem 1.1rem;
 }
 .comment-card-head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; font-size: .85rem; color: var(--fg-muted); margin-bottom: .4rem; }

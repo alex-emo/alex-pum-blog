@@ -15,6 +15,8 @@
   const parentInput = document.getElementById("comment-parent");
   const submitButton = document.getElementById("comment-submit");
   const messageEl = document.getElementById("comment-msg");
+  const openButton = document.getElementById("comment-open");
+  let captchaLoaded = false;
 
   let captchaId = "";
   let replyingTo = null;
@@ -32,6 +34,18 @@
     messageEl.textContent = text;
     messageEl.className = "form-msg " + (isError ? "err" : "ok");
   }
+
+  function openForm() {
+    form.hidden = false;
+    if (openButton) openButton.hidden = true;
+    if (!captchaLoaded) {
+      captchaLoaded = true;
+      loadCaptcha();
+    }
+    contentInput.focus({ preventScroll: true });
+  }
+
+  if (openButton) openButton.addEventListener("click", openForm);
 
   async function loadCaptcha() {
     captchaImage.alt = "验证码加载中";
@@ -58,6 +72,7 @@
 
   section.querySelectorAll(".comment-reply").forEach((button) => {
     button.addEventListener("click", () => {
+      openForm();
       if (replyingTo === button.dataset.parent) {
         cancelReply();
         return;
@@ -174,5 +189,4 @@
     }
   });
 
-  loadCaptcha();
 })();

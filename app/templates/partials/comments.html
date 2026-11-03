@@ -35,7 +35,9 @@
     {% endif %}
   </div>
 
-  <form id="comment-form" class="comment-form" novalidate>
+  <button type="button" id="comment-open" class="btn-primary comment-open">发表评论</button>
+
+  <form id="comment-form" class="comment-form" novalidate hidden>
     <h3 class="comment-form-title">发表评论</h3>
     {% if settings.comment_require_approval %}
     <p class="form-hint">提交后需博主审核，通过后才会公开显示。</p>

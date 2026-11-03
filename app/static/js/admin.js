@@ -74,7 +74,7 @@
       document.getElementById("stat-posts").textContent = stats.posts_total;
       document.getElementById("stat-published").textContent = stats.posts_published;
       document.getElementById("stat-drafts").textContent = stats.posts_draft;
-      document.getElementById("stat-pending").textContent = stats.comments_pending;
+      document.getElementById("stat-total").textContent = stats.comments_total;
       document.getElementById("stat-views").textContent = stats.views_total;
     } catch (err) {
       toast(err.message, true);
@@ -128,7 +128,6 @@
 
     async function load() {
       const params = new URLSearchParams({ page: state.page, page_size: 20 });
-      if (state.status) params.set("status", state.status);
       if (state.q) params.set("q", state.q);
       table.innerHTML = '<p class="muted" style="padding:1rem">加载中…</p>';
       try {
@@ -213,21 +212,10 @@
   function initComments() {
     const list = document.getElementById("comments-list");
     const pager = document.getElementById("comments-pagination");
-    const state = { page: 1, status: "pending" };
-
-    document.querySelectorAll(".tabs .tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tabs .tab").forEach((t) => t.classList.remove("is-active"));
-        tab.classList.add("is-active");
-        state.status = tab.dataset.status;
-        state.page = 1;
-        load();
-      });
-    });
+    const state = { page: 1 };
 
     async function load() {
       const params = new URLSearchParams({ page: state.page, page_size: 20 });
-      if (state.status) params.set("status", state.status);
       list.innerHTML = '<p class="muted">加载中…</p>';
       try {
         const data = await Api.get("/api/admin/comments?" + params);
@@ -247,7 +235,6 @@
         '<article class="comment-card" data-id="' + comment.id + '">' +
           '<div class="comment-card-head">' +
             '<span class="comment-card-author">' + esc(comment.author_name) + "</span>" +
-            statusBadge(comment.status) +
             "<span>" + fmt(comment.created_at) + "</span>" +
             '<span class="comment-card-post">' +
               (comment.post_slug
@@ -257,8 +244,6 @@
           "</div>" +
           '<p class="comment-card-body">' + esc(comment.content) + "</p>" +
           '<div class="comment-card-actions">' +
-            (comment.status !== "approved" ? '<button class="btn-primary btn-sm" data-action="approve">通过</button>' : "") +
-            (comment.status !== "spam" ? '<button class="btn-ghost btn-sm" data-action="spam">拒绝</button>' : "") +
             '<button class="btn-danger btn-sm" data-action="delete">删除</button>' +
           "</div>" +
         "</article>"
@@ -283,18 +268,12 @@
       const id = card.dataset.id;
       const action = button.dataset.action;
 
-      if (action === "delete" && !confirm("删除这条评论？")) return;
+      if (!confirm("删除这条评论？")) return;
 
       try {
-        if (action === "delete") {
-          await Api.del("/api/admin/comments/" + id);
-          toast("已删除");
-        } else {
-          await Api.post("/api/admin/comments/" + id + "/" + action, {});
-          toast(action === "approve" ? "已通过" : "已拒绝");
-        }
+        await Api.del("/api/admin/comments/" + id);
+        toast("已删除");
         load();
-        refreshPendingBadge();
       } catch (err) {
         toast(err.message, true);
       }
