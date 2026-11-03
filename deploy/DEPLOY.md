@@ -18,6 +18,32 @@ systemd、nginx、自签证书占位、certbot 签发、防火墙、每日备份
 
 下面的分步说明是脚本的等价手工流程，出问题时可以对照着排查。
 
+## 中国大陆无备案：用 Cloudflare Tunnel（当前线上方案）
+
+阿里云大陆节点未备案时，80 端口被劫持成 `Non-compliance ICP Filing` 403，443 入站 TLS 会被按 SNI 重置
+（CF 回源表现为 525）。可行方案是 **Cloudflare Tunnel**：源站主动出站连 CF，不需要任何入站端口。
+
+服务器上：
+
+```bash
+curl -fsSL -o /tmp/cloudflared.deb \
+  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+dpkg -i /tmp/cloudflared.deb
+cloudflared service install <CF 隧道 token>
+systemctl status cloudflared --no-pager
+```
+
+CF 控制台（零信任 → 网络 → 隧道）：
+
+1. 创建隧道，连接器选 Cloudflared，复制 token（就是上面那条）
+2. 隧道 → 添加路由 → 已发布的应用程序 → 子域 `blog`、域 `pum.org.cn`、服务 `http://127.0.0.1:8010`
+3. 保存后 CF 自动建 CNAME `blog.pum.org.cn → <隧道ID>.cfargotunnel.com`（代理保持橙色云）
+
+此时 `https://blog.pum.org.cn` 由 CF 边缘提供证书，源站 80/443 可以全部关闭：
+直接访问 IP 会绕过 CF，建议在安全组只放行 22。
+
+隧道配置是 CF 托管（remote-managed），改路由不需要动服务器文件。
+
 ---
 
 
