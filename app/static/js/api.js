@@ -46,7 +46,14 @@
     if (!response.ok) {
       let message = "请求失败（" + response.status + "）";
       if (data && typeof data === "object" && data.detail) {
-        message = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail);
+        if (Array.isArray(data.detail)) {
+          const first = data.detail[0] || {};
+          message = first.msg ? first.msg.replace(/^String should have at most \d+ characters$/, "输入内容过长") : "提交内容有误";
+        } else if (typeof data.detail === "string") {
+          message = data.detail;
+        } else {
+          message = JSON.stringify(data.detail);
+        }
       } else if (typeof data === "string" && data) {
         message = data;
       }
