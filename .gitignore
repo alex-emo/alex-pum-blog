@@ -13,3 +13,4 @@ backups/
 .dev-server.log
 .git-ssh/
 .deploy/
+text/
