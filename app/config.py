@@ -34,12 +34,12 @@ class Settings:
 
     def __init__(self) -> None:
         # ---- 站点信息 ----
-        self.site_name: str = os.getenv("SITE_NAME", "Pum 的博客")
+        self.site_name: str = os.getenv("SITE_NAME", "Alex 的博客")
         self.site_description: str = os.getenv(
             "SITE_DESCRIPTION", "记录技术、折腾与日常。"
         )
         self.site_url: str = os.getenv("SITE_URL", "https://blog.pum.org.cn").rstrip("/")
-        self.site_author: str = os.getenv("SITE_AUTHOR", "Pum")
+        self.site_author: str = os.getenv("SITE_AUTHOR", "Alex")
         self.site_signature: str = os.getenv(
             "SITE_SIGNATURE", "我们必须相信西西弗斯是自由的。"
         )

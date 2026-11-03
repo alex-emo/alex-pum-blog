@@ -1,4 +1,4 @@
-# Pum 的博客
+# Alex 的博客
 
 个人博客：Jinja2 服务端渲染 + FastAPI 后台 + SQLite。为 2 核 1G 的小机器设计，不跑 Node、不跑 Redis。
 

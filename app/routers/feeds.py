@@ -69,7 +69,7 @@ def rss(db: Session = Depends(get_db)) -> Response:
     <link>{base}/</link>
     <description>{escape(settings.site_description)}</description>
     <language>zh-CN</language>
-    <generator>Pum Blog</generator>
+    <generator>{escape(settings.site_name)}</generator>
     <lastBuildDate>{format_datetime(to_local(datetime.now(timezone.utc)))}</lastBuildDate>
     <atom:link href="{base}/rss.xml" rel="self" type="application/rss+xml"/>
 {chr(10).join(items)}
