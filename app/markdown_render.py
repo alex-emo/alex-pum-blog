@@ -1,6 +1,8 @@
 """Markdown 渲染。文章发布时渲染一次存库，读接口直接用 HTML，省 CPU。"""
 from __future__ import annotations
 
+import re
+
 import markdown
 from pygments.formatters import HtmlFormatter
 
@@ -21,6 +23,36 @@ _EXTENSION_CONFIGS = {
     "toc": {"permalink": False, "toc_depth": "2-4"},
     "pymdownx.arithmatex": {"generic": True, "smart_dollar": False},
 }
+
+
+_MATH_FUNCS = {
+    "max": r"\max", "min": r"\min", "log": r"\log", "ln": r"\ln",
+    "exp": r"\exp", "sin": r"\sin", "cos": r"\cos", "tan": r"\tan",
+    "gcd": r"\gcd", "lim": r"\lim",
+}
+_IDENT = re.compile(r"(?<![\\A-Za-z])([A-Za-z]{2,})(?![A-Za-z])")
+_FUNC = re.compile(r"(?<![\\A-Za-z])(max|min|log|ln|exp|sin|cos|tan|gcd|lim)(?![A-Za-z])")
+
+
+def _tidy_math_segment(seg: str) -> str:
+    """把 log2 变成 \\log_2，把 st 这类多字母变量变成正体。
+
+    TeX 默认把连续字母当成多个变量相乘（st 会排成 s·t），
+    这里对常见函数名与多字母标识符做一次轻量修正。
+    """
+    seg = re.sub(r"(?<![\\A-Za-z])log2(?![A-Za-z0-9])", r"\\log_2", seg)
+    seg = _FUNC.sub(lambda m: _MATH_FUNCS[m.group(1)], seg)
+    seg = _IDENT.sub(lambda m: "\\mathrm{" + m.group(1) + "}", seg)
+    return seg
+
+
+_BLOCK_MATH = re.compile(r"\$\$(.+?)\$\$", re.S)
+_INLINE_MATH = re.compile(r"(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)")
+
+
+def _tidy_math(text: str) -> str:
+    text = _BLOCK_MATH.sub(lambda m: "$$" + _tidy_math_segment(m.group(1)) + "$$", text)
+    return _INLINE_MATH.sub(lambda m: "$" + _tidy_math_segment(m.group(1)) + "$", text)
 
 
 def _normalize_math_blocks(text: str) -> str:
@@ -64,13 +96,13 @@ _renderer = _new_markdown()
 def render(text: str) -> str:
     """Markdown -> HTML 片段。"""
     _renderer.reset()
-    return _renderer.convert(_normalize_math_blocks(text))
+    return _renderer.convert(_normalize_math_blocks(_tidy_math(text)))
 
 
 def render_with_toc(text: str) -> tuple[str, str]:
     """Markdown -> (HTML, 目录 HTML)。目录取 h2-h4，没有标题时返回空串。"""
     _renderer.reset()
-    html = _renderer.convert(_normalize_math_blocks(text))
+    html = _renderer.convert(_normalize_math_blocks(_tidy_math(text)))
     toc = getattr(_renderer, "toc", "") or ""
     if "<li>" not in toc:
         toc = ""
