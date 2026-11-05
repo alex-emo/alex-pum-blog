@@ -31,12 +31,33 @@
   <meta property="og:url" content="{{ settings.site_url }}{{ request.url.path }}">
   {% block og_image %}{% endblock %}
 
+  <meta name="twitter:card" content="{% block twitter_card %}summary{% endblock %}">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ settings.site_name }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ settings.site_description }}{% endblock %}">
+  {% block twitter_image %}{% endblock %}
+
   <link rel="icon" href="{{ asset_url('/static/favicon.ico') }}" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url('/static/img/favicon-32.png') }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url('/static/img/apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ asset_url('/static/site.webmanifest') }}">
   <link rel="alternate" type="application/rss+xml" title="{{ settings.site_name }}" href="/rss.xml">
   <link rel="stylesheet" href="{{ asset_url('/static/css/style.css') }}">
   <link rel="stylesheet" href="{{ asset_url('/static/css/pygments.css') }}">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ settings.site_name|tojson }},
+    "url": {{ (settings.site_url ~ '/')|tojson }},
+    "description": {{ settings.site_description|tojson }},
+    "inLanguage": "zh-CN",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {{ (settings.site_url ~ '/search?q={query}')|tojson }},
+      "query-input": "required name=query"
+    }
+  }
+  </script>
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">

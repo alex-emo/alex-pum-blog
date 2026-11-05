@@ -4,13 +4,15 @@
 
 ## 功能
 
-**前台**：文章列表分页、标签、搜索、Markdown 详情（代码高亮 + 目录）、上下篇、RSS、sitemap、robots、深浅色自适应、移动端适配。
+**前台**：文章列表分页、标签、搜索、Markdown 详情（代码高亮、目录、数学公式、删除线）、上下篇、RSS、sitemap、robots、深浅色自适应、移动端适配。
 
 **后台**（`/admin`）：密码登录、仪表盘、文章增删改（实时预览、粘贴/拖拽上传图片、Ctrl+S 保存）、评论审核（通过/拒绝/删除）。
 
-**评论**：匿名可评，自建图片验证码 + 蜜罐字段 + IP 限流（30 秒 1 条 / 每小时 10 条）+ 默认进待审。
+**评论**：匿名可评，自建图片验证码 + 蜜罐字段 + IP 限流（30 秒 1 条、每小时 40 次尝试），提交后直接显示，后台可删除。
 
-**图片**：上传后 Pillow 校验、按 EXIF 摆正、限宽 1920、转 WebP 并生成 480 宽缩略图，存 `media/YYYY/MM/`，生产环境由 nginx 直接托管。
+**图片**：上传后 Pillow 校验、按 EXIF 摆正、限宽 1920、转 WebP 并生成 480 宽缩略图，存 `media/YYYY/MM/`，由应用直接托管。
+
+**标准文件**：`/robots.txt`、`/sitemap.xml`（含标签页）、`/rss.xml`、`/static/site.webmanifest`、`/.well-known/security.txt`；页面带 OG / Twitter 卡片与 JSON-LD（WebSite、BlogPosting），响应头含 `X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy`。
 
 ## 目录
 

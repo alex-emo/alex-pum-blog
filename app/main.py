@@ -74,6 +74,26 @@ app = FastAPI(
     openapi_url="/api/openapi.json" if settings.debug else None,
 )
 
+# 统一响应头：安全头 + 静态资源缓存。
+# 服务器直接用隧道回源到 uvicorn，没有 nginx 兜底，安全头必须在这里加。
+@app.middleware("http")
+async def add_response_headers(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/static/"):
+        response.headers.setdefault("Cache-Control", "public, max-age=604800")
+    elif path.startswith("/media/"):
+        # 上传文件名带随机串，内容不变，可以长期缓存
+        response.headers.setdefault("Cache-Control", "public, max-age=31536000, immutable")
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if path.startswith("/admin") or path.startswith("/api/admin"):
+        response.headers.setdefault("X-Robots-Tag", "noindex, nofollow")
+    return response
+
+
 # 静态资源；媒体文件生产环境由 nginx 直接托管，这里挂载保证本地开发可用
 app.mount("/static", StaticFiles(directory=settings.static_dir, check_dir=False), name="static")
 app.mount("/media", StaticFiles(directory=settings.media_dir, check_dir=False), name="media")

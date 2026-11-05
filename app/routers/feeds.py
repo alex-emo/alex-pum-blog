@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
-from app.models import Post, PostStatus
+from app.models import Post, PostStatus, Tag
 from app.utils.timez import to_local
 
 router = APIRouter(tags=["feeds"], include_in_schema=False)
@@ -90,6 +90,20 @@ def sitemap(db: Session = Depends(get_db)) -> Response:
         lastmod = f"<lastmod>{when.date().isoformat()}</lastmod>" if when else ""
         urls.append(f"  <url><loc>{base}/{post.slug}</loc>{lastmod}</url>")
 
+    tags = (
+        db.execute(
+            select(Tag)
+            .join(Tag.posts)
+            .where(Post.status == PostStatus.PUBLISHED)
+            .distinct()
+            .order_by(Tag.name)
+        )
+        .scalars()
+        .all()
+    )
+    for tag in tags:
+        urls.append(f"  <url><loc>{base}/tag/{tag.slug}</loc></url>")
+
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {chr(10).join(urls)}
@@ -105,3 +119,14 @@ def robots() -> Response:
         media_type="text/plain; charset=utf-8",
         headers=_RSS_HEADERS,
     )
+
+
+@router.get("/.well-known/security.txt")
+def security_txt() -> Response:
+    body = (
+        f"Contact: mailto:{settings.site_email}\n"
+        "Expires: 2027-11-05T00:00:00.000Z\n"
+        "Preferred-Languages: zh-CN, en\n"
+        f"Canonical: {settings.site_url}/.well-known/security.txt\n"
+    )
+    return Response(body, media_type="text/plain; charset=utf-8", headers=_RSS_HEADERS)
