@@ -14,3 +14,4 @@ itsdangerous==2.2.0
 pypinyin==0.55.0
 # 仅 scripts/smoke_test.py 需要（TestClient 基于 httpx）
 httpx==0.28.1
+pymdown-extensions==12.3

@@ -12,11 +12,14 @@ _EXTENSIONS = [
     "sane_lists",    # 列表解析更符合直觉
     "nl2br",         # 单个换行即换行，中文写作习惯
     "attr_list",     # 允许 {: .cls } 之类的属性
+    "pymdownx.tilde",      # ~~删除线~~
+    "pymdownx.arithmatex", # 数学公式，输出 \( \) / \[ \] 交给 MathJax
 ]
 
 _EXTENSION_CONFIGS = {
     "codehilite": {"css_class": "codehilite", "guess_lang": False, "linenums": False},
     "toc": {"permalink": False, "toc_depth": "2-4"},
+    "pymdownx.arithmatex": {"generic": True, "smart_dollar": True},
 }
 
 
@@ -55,3 +58,8 @@ def pygments_css(light_style: str = "friendly", dark_style: str = "one-dark") ->
         "/* 浅色主题 */\n" + light + "\n\n"
         'html[data-theme="dark"] {\n  /* 深色主题 */\n' + dark_block + "\n}\n"
     )
+
+
+def has_math(html: str) -> bool:
+    """正文是否包含数学公式（arithmatex 的产物），用于决定是否加载 MathJax。"""
+    return 'class="arithmatex"' in (html or "")

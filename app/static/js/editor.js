@@ -66,6 +66,10 @@
     try {
       const data = await Api.post("/api/admin/preview", { content_md: markdown });
       previewBody.innerHTML = data.html;
+      // 预览里如果有数学公式，交给 MathJax 排版
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([previewBody]).catch(() => {});
+      }
       previewState.textContent = "";
     } catch (err) {
       previewState.textContent = "预览失败";

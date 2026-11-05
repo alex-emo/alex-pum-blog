@@ -8,6 +8,16 @@
 <button type="button" class="btn-primary" id="save-publish">发布</button>
 {% endblock %}
 
+{% block head %}
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+    options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+  };
+</script>
+<script defer src="{{ asset_url('/static/vendor/mathjax/tex-mml-chtml.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <form id="editor-form" data-post-id="{{ post_id if post_id else '' }}" novalidate>
   <div class="field">

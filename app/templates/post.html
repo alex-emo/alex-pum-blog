@@ -9,6 +9,18 @@
 {% block canonical %}{{ settings.site_url }}/{{ post.slug }}{% endblock %}
 {% block og_image %}{% if post.cover_image %}<meta property="og:image" content="{{ settings.site_url }}{{ post.cover_image }}">{% endif %}{% endblock %}
 
+{% block head %}
+{% if has_math %}
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+    options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+  };
+</script>
+<script defer src="{{ asset_url('/static/vendor/mathjax/tex-mml-chtml.js') }}"></script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <article class="post">
   <header class="post-header">

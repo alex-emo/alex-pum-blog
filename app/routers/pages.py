@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
-from app import schemas
+from app import markdown_render, schemas
 from app.config import settings
 from app.database import get_db
 from app.models import Post, PostStatus, Tag
@@ -165,6 +165,7 @@ def post_detail(request: Request, slug: str, db: Session = Depends(get_db)):
         "post.html",
         post=post,
         toc=post.content_toc,
+        has_math=markdown_render.has_math(post.content_html),
         prev=prev_post,
         next=next_post,
         comments=comment_service.list_approved_comments(db, post.id),
