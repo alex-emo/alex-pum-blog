@@ -19,8 +19,39 @@ _EXTENSIONS = [
 _EXTENSION_CONFIGS = {
     "codehilite": {"css_class": "codehilite", "guess_lang": False, "linenums": False},
     "toc": {"permalink": False, "toc_depth": "2-4"},
-    "pymdownx.arithmatex": {"generic": True, "smart_dollar": True},
+    "pymdownx.arithmatex": {"generic": True, "smart_dollar": False},
 }
+
+
+def _normalize_math_blocks(text: str) -> str:
+    """让独占一行的 $$ ... $$ 前后各空一行。
+
+    Markdown 只有空行才分段，紧贴正文的 $$ 块会被并进同一个段落，
+    arithmatex 就识别不到，只能原样输出。这里补上分段用的空行。
+    """
+    lines = (text or "").splitlines()
+    out: list[str] = []
+    i = 0
+    in_fence = False
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            in_fence = not in_fence
+        if not in_fence and stripped == "$$":
+            j = i + 1
+            while j < len(lines) and lines[j].strip() != "$$":
+                j += 1
+            if j < len(lines):
+                if out and out[-1].strip():
+                    out.append("")
+                out.extend(lines[i : j + 1])
+                if j + 1 < len(lines) and lines[j + 1].strip():
+                    out.append("")
+                i = j + 1
+                continue
+        out.append(lines[i])
+        i += 1
+    return "\n".join(out)
 
 
 def _new_markdown() -> markdown.Markdown:
@@ -33,13 +64,13 @@ _renderer = _new_markdown()
 def render(text: str) -> str:
     """Markdown -> HTML 片段。"""
     _renderer.reset()
-    return _renderer.convert(text or "")
+    return _renderer.convert(_normalize_math_blocks(text))
 
 
 def render_with_toc(text: str) -> tuple[str, str]:
     """Markdown -> (HTML, 目录 HTML)。目录取 h2-h4，没有标题时返回空串。"""
     _renderer.reset()
-    html = _renderer.convert(text or "")
+    html = _renderer.convert(_normalize_math_blocks(text))
     toc = getattr(_renderer, "toc", "") or ""
     if "<li>" not in toc:
         toc = ""

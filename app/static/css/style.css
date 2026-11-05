@@ -280,6 +280,10 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 .post { max-width: 800px; }
 .post-body { min-width: 0; }
 
+/* MathJax：块级公式留出呼吸空间 */
+.post-body mjx-container[display="true"] { margin: 1.4em 0; }
+.post-body mjx-container { max-width: 100%; }
+
 .toc-box {
   margin: 0 0 2rem; padding: .9rem 1rem; background: var(--bg-elevated);
   border-radius: var(--radius-sm);
