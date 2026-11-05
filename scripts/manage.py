@@ -20,7 +20,7 @@ from sqlalchemy import select  # noqa: E402
 
 from app import models  # noqa: E402
 from app.database import SessionLocal, engine  # noqa: E402
-from app.markdown_render import pygments_css  # noqa: E402
+from app.markdown_render import pygments_css, render_with_toc  # noqa: E402
 from app.migrations.runner import upgrade_all  # noqa: E402
 from app.security import hash_password  # noqa: E402
 
@@ -44,6 +44,23 @@ def _read_password(args: argparse.Namespace) -> str:
     if len(first) < 8:
         raise SystemExit("密码至少 8 位")
     return first
+
+
+def cmd_rerender(_args: argparse.Namespace) -> None:
+    """用当前 Markdown 管线重新渲染所有文章存库（改扩展后需要跑一次）。"""
+    from sqlalchemy import func
+
+    from app.models import Post
+
+    with SessionLocal() as db:
+        posts = db.execute(select(Post)).scalars().all()
+        for post in posts:
+            html, toc = render_with_toc(post.content_md)
+            post.content_html = html
+            post.content_toc = toc
+        db.commit()
+        total = db.execute(select(func.count(Post.id))).scalar_one()
+    print(f"已重新渲染 {total} 篇文章")
 
 
 def cmd_create_admin(args: argparse.Namespace) -> None:
@@ -84,6 +101,8 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("migrate", help="执行数据库迁移").set_defaults(func=cmd_migrate)
+
+    sub.add_parser("rerender", help="重新渲染所有文章的 HTML").set_defaults(func=cmd_rerender)
 
     p_create = sub.add_parser("create-admin", help="创建管理员")
     p_create.add_argument("username")
