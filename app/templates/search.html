@@ -3,6 +3,9 @@
 
 {% block title %}{{ heading or '搜索' }} · {{ settings.site_name }}{% endblock %}
 {% block description %}搜索「{{ keyword }}」的结果{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, follow">{% endblock %}
+{% block canonical %}{{ settings.site_url }}/{% endblock %}
+{% block ogurl %}{{ settings.site_url }}/{% endblock %}
 
 {% block content %}
 <h1 class="page-heading">{{ heading or '搜索' }}</h1>

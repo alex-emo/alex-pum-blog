@@ -5,6 +5,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select
@@ -77,6 +78,18 @@ app = FastAPI(
 # 统一响应头：安全头 + 静态资源缓存。
 # 服务器直接用隧道回源到 uvicorn，没有 nginx 兜底，安全头必须在这里加。
 @app.middleware("http")
+async def support_head_requests(request: Request, call_next):
+    """HEAD 按 GET 处理，只保留响应头（Starlette 默认不对 GET 路由补 HEAD）。"""
+    if request.method != "HEAD":
+        return await call_next(request)
+    request.scope["method"] = "GET"
+    response = await call_next(request)
+    if hasattr(response, "body"):
+        response.body = b""
+    return response
+
+
+@app.middleware("http")
 async def add_response_headers(request: Request, call_next):
     response = await call_next(request)
     path = request.url.path
@@ -117,6 +130,14 @@ def health() -> dict:
 app.include_router(feeds.router)
 app.include_router(admin_pages.router)
 app.include_router(pages.router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """参数校验失败：API 返回 JSON，页面返回 400 错误页。"""
+    if request.url.path.startswith("/api/"):
+        return JSONResponse({"detail": exc.errors()}, status_code=422)
+    return pages.bad_request(request, code=422)
 
 
 @app.exception_handler(StarletteHTTPException)

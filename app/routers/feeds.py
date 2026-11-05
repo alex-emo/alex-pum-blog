@@ -83,7 +83,16 @@ def rss(db: Session = Depends(get_db)) -> Response:
 def sitemap(db: Session = Depends(get_db)) -> Response:
     posts = _published_posts(db)
     base = settings.site_url
-    urls = [f"  <url><loc>{base}/</loc></url>", f"  <url><loc>{base}/tags</loc></url>"]
+    latest = None
+    for post in posts:
+        when = to_local(post.published_at or post.created_at)
+        if when and (latest is None or when > latest):
+            latest = when
+    home_mod = f"<lastmod>{latest.date().isoformat()}</lastmod>" if latest else ""
+    urls = [
+        f"  <url><loc>{base}/</loc>{home_mod}</url>",
+        f"  <url><loc>{base}/tags</loc>{home_mod}</url>",
+    ]
 
     for post in posts:
         when = to_local(post.published_at or post.created_at)
@@ -102,7 +111,14 @@ def sitemap(db: Session = Depends(get_db)) -> Response:
         .all()
     )
     for tag in tags:
-        urls.append(f"  <url><loc>{base}/tag/{tag.slug}</loc></url>")
+        whens = [
+            to_local(p.published_at or p.created_at)
+            for p in tag.posts
+            if p.status == PostStatus.PUBLISHED
+        ]
+        whens = [w for w in whens if w]
+        tag_mod = f"<lastmod>{max(whens).date().isoformat()}</lastmod>" if whens else ""
+        urls.append(f"  <url><loc>{base}/tag/{tag.slug}</loc>{tag_mod}</url>")
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

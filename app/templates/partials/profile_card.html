@@ -2,14 +2,20 @@
 <aside class="sidebar">
   <details class="profile-card" id="profile-card" open>
     <summary class="profile-toggle">
-      <img src="{{ asset_url(settings.site_avatar) }}" alt="" width="36" height="36" loading="lazy">
+      <picture>
+        <source type="image/webp" srcset="{{ asset_url('/static/img/avatar-96.webp') }}">
+        <img src="{{ asset_url(settings.site_avatar) }}" alt="" width="36" height="36" loading="lazy">
+      </picture>
       <span class="pt-name">{{ settings.site_name }}</span>
       <svg class="pt-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </summary>
 
     <div class="profile-body">
       <div class="profile-top">
-        <img class="avatar" src="{{ asset_url(settings.site_avatar) }}" alt="" width="96" height="96" loading="lazy">
+        <picture>
+          <source type="image/webp" srcset="{{ asset_url('/static/img/avatar-96.webp') }} 1x, {{ asset_url('/static/img/avatar-192.webp') }} 2x">
+          <img class="avatar" src="{{ asset_url(settings.site_avatar) }}" alt="" width="96" height="96" loading="lazy">
+        </picture>
         <div class="profile-identity">
           <a class="profile-name" href="/">{{ settings.site_name }}</a>
           <p class="profile-signature">{{ settings.site_signature }}</p>

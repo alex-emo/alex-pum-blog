@@ -7,6 +7,8 @@
 {% block content %}
 {% if heading %}
   <h1 class="page-heading">{{ heading }}</h1>
+{% else %}
+  <h1 class="page-heading sr-only">最新文章</h1>
 {% endif %}
 
 {% if posts %}

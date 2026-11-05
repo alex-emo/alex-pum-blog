@@ -145,6 +145,7 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 
 /* ============================================================ 侧栏个人卡 */
 .profile-toggle { display: none; }
+.profile-toggle picture, .profile-top picture { display: contents; }
 .sidebar { position: sticky; top: calc(var(--header-h) + 1.5rem); }
 .profile-card {
   padding: 1.35rem 1.1rem;

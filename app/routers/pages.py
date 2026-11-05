@@ -5,7 +5,7 @@ API 路由只服务浏览器里的 JS 和以后可能的移动端。
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
@@ -50,6 +50,8 @@ def _list_page(
         tag_slug=tag_slug,
         keyword=keyword,
     )
+    if result.total > 0 and page > result.total_pages:
+        raise HTTPException(status_code=404, detail="页面不存在")
     pagination = Pagination(
         page=result.page,
         total_pages=result.total_pages,
@@ -178,8 +180,12 @@ def not_found(request: Request, message: str = "页面不存在") -> HTMLRespons
     return render(request, "error.html", status_code=404, code=404, message=message)
 
 
+def bad_request(request: Request, message: str = "请求参数有误", code: int = 400) -> HTMLResponse:
+    return render(request, "error.html", status_code=code, code=code, message=message)
+
+
 def server_error(request: Request) -> HTMLResponse:
     return render(request, "error.html", status_code=500, code=500, message="服务器开小差了")
 
 
-__all__ = ["router", "not_found", "server_error"]
+__all__ = ["router", "not_found", "bad_request", "server_error"]
