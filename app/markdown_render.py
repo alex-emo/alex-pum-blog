@@ -1,6 +1,7 @@
 """Markdown 渲染。文章发布时渲染一次存库，读接口直接用 HTML，省 CPU。"""
 from __future__ import annotations
 
+import html as _html
 import re
 
 import markdown
@@ -132,6 +133,35 @@ def render_with_toc(text: str) -> tuple[str, str]:
     if "<li>" not in toc:
         toc = ""
     return html, toc
+
+
+_INLINE = markdown.Markdown(
+    extensions=["pymdownx.tilde", "pymdownx.arithmatex"],
+    extension_configs={"pymdownx.arithmatex": {"generic": True, "smart_dollar": False}},
+)
+_STRIP_MATH = re.compile(r"\${1,2}([^$]*)\${1,2}")
+_STRIP_MARKS = re.compile(r"(?:\*\*|__|~~|`|\*|_)")
+
+
+def render_inline(text: str) -> str:
+    """行内 Markdown：标题用。只取单段落，去掉外层 <p>。"""
+    source = _html.escape((text or "").strip())
+    if not source:
+        return ""
+    _INLINE.reset()
+    html = _INLINE.convert(source).strip()
+    if html.startswith("<p>") and html.endswith("</p>") and html.count("<p>") == 1:
+        html = html[3:-4]
+    return html
+
+
+def strip_inline(text: str) -> str:
+    """标题的纯文本版本：去掉公式定界符与强调标记，给 meta / RSS / JSON-LD 用。"""
+    plain = _STRIP_MATH.sub(r"\1", text or "")
+    plain = _STRIP_MARKS.sub("", plain)
+    plain = re.sub(r"<[^>]*>", "", plain)
+    plain = re.sub(r"\\([A-Za-z]+)", r"\1", plain)
+    return " ".join(plain.split())
 
 
 def pygments_css(light_style: str = "friendly", dark_style: str = "one-dark") -> str:

@@ -18,7 +18,7 @@
           <span>{{ post.comment_count }} 条评论</span>
         {% endif %}
       </p>
-      <h2 class="card-title"><a href="{{ post.slug|post_url }}">{{ post.title }}</a></h2>
+      <h2 class="card-title"><a href="{{ post.slug|post_url }}">{{ post.title_html|safe }}</a></h2>
       {% if post.summary %}
       <p class="card-summary">{{ post.summary }}</p>
       {% endif %}

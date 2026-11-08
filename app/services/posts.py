@@ -8,7 +8,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
-from app.markdown_render import render_with_toc
+from app.markdown_render import render_inline, render_with_toc
 from app.models import Comment, Post, PostStatus, Tag
 from app.utils.text import excerpt, slugify, unique_slug
 
@@ -252,6 +252,7 @@ def serialize_list_item(db: Session, post: Post, counts: dict[int, int] | None =
         id=post.id,
         slug=post.slug,
         title=post.title,
+        title_html=render_inline(post.title),
         summary=post.summary,
         cover_image=post.cover_image,
         status=post.status,

@@ -60,6 +60,7 @@ class PostListItem(BaseModel):
     id: int
     slug: str
     title: str
+    title_html: str = ""
     summary: str
     cover_image: str | None
     status: str

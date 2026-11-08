@@ -48,6 +48,15 @@
   <link rel="alternate" type="application/rss+xml" title="{{ settings.site_name }}" href="/rss.xml">
   <link rel="stylesheet" href="{{ asset_url('/static/css/style.css') }}">
   <link rel="stylesheet" href="{{ asset_url('/static/css/pygments.css') }}">
+  {% if has_math %}
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+      options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+    };
+  </script>
+  <script defer src="{{ asset_url('/static/vendor/mathjax/tex-mml-svg.js') }}"></script>
+  {% endif %}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",

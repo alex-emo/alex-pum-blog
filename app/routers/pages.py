@@ -57,10 +57,12 @@ def _list_page(
         total_pages=result.total_pages,
         builder=lambda number: page_url(request, base_path, number),
     )
+    items = [post_service.serialize_list_item(db, post) for post in result.items]
     return render(
         request,
         template,
-        posts=[post_service.serialize_list_item(db, post) for post in result.items],
+        posts=items,
+        has_math=any(markdown_render.has_math(item.title_html) for item in items),
         pagination=pagination,
         total=result.total,
         heading=heading,
@@ -162,12 +164,16 @@ def post_detail(request: Request, slug: str, db: Session = Depends(get_db)):
     db.refresh(post)
 
     prev_post, next_post = post_service.neighbors(db, post)
+    title_html = markdown_render.render_inline(post.title)
     return render(
         request,
         "post.html",
         post=post,
+        title_html=title_html,
+        title_plain=markdown_render.strip_inline(post.title),
         toc=post.content_toc,
-        has_math=markdown_render.has_math(post.content_html),
+        has_math=markdown_render.has_math(post.content_html)
+        or markdown_render.has_math(title_html),
         prev=prev_post,
         next=next_post,
         comments=comment_service.list_approved_comments(db, post.id),

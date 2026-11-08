@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
+from app.markdown_render import strip_inline
 from app.models import Post, PostStatus, Tag
 from app.utils.timez import to_local
 
@@ -52,7 +53,7 @@ def rss(db: Session = Depends(get_db)) -> Response:
         )
         items.append(
             f"""    <item>
-      <title>{escape(post.title)}</title>
+      <title>{escape(strip_inline(post.title))}</title>
       <link>{_post_link(post.slug)}</link>
       <guid isPermaLink="true">{_post_link(post.slug)}</guid>
       <pubDate>{format_datetime(when) if when else ''}</pubDate>

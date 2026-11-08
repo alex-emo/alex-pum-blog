@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
 {% block body_class %}post-page{% endblock %}
-{% block title %}{{ post.title }} · {{ settings.site_name }}{% endblock %}
+{% block title %}{{ title_plain }} · {{ settings.site_name }}{% endblock %}
 {% block description %}{{ post.summary }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_title %}{{ title_plain }}{% endblock %}
 {% block og_description %}{{ post.summary }}{% endblock %}
 {% block canonical %}{{ settings.site_url }}/{{ post.slug }}{% endblock %}
 {% block og_image %}{% if post.cover_image %}<meta property="og:image" content="{{ settings.site_url }}{{ post.cover_image }}">
   <meta property="og:image:alt" content="{{ post.title }}">{% else %}{{ super() }}{% endif %}{% endblock %}
 {% block twitter_card %}{% if post.cover_image %}summary_large_image{% else %}{{ super() }}{% endif %}{% endblock %}
-{% block twitter_title %}{{ post.title }}{% endblock %}
+{% block twitter_title %}{{ title_plain }}{% endblock %}
 {% block twitter_description %}{{ post.summary }}{% endblock %}
 {% block twitter_image %}{% if post.cover_image %}<meta name="twitter:image" content="{{ settings.site_url }}{{ post.cover_image }}">{% else %}{{ super() }}{% endif %}{% endblock %}
 
@@ -19,7 +19,7 @@
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": {{ post.title|tojson }},
+  "headline": {{ title_plain|tojson }},
   "description": {{ post.summary|tojson }},
   "datePublished": {{ (post.published_at or post.created_at)|iso|tojson }},
   "dateModified": {{ post.updated_at|iso|tojson }},
@@ -31,15 +31,6 @@
   "image": {{ (settings.site_url ~ post.cover_image)|tojson }}{% endif %}
 }
 </script>
-{% if has_math %}
-<script>
-  window.MathJax = {
-    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
-    options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
-  };
-</script>
-<script defer src="{{ asset_url('/static/vendor/mathjax/tex-mml-svg.js') }}"></script>
-{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -52,7 +43,7 @@
       {% endfor %}
     </p>
     {% endif %}
-    <h1 class="post-title">{{ post.title }}</h1>
+    <h1 class="post-title">{{ title_html|safe }}</h1>
     <p class="post-meta">
       <time datetime="{{ (post.published_at or post.created_at)|iso }}">{{ (post.published_at or post.created_at)|dt }}</time>
       <span class="dot" aria-hidden="true">·</span>

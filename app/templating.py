@@ -16,6 +16,7 @@ from sqlalchemy import func, select
 
 from app.config import settings
 from app.database import SessionLocal
+from app.markdown_render import strip_inline
 from app import models
 from app.utils.text import reading_minutes
 from app.utils.timez import format_dt, format_dt_full, isoformat_local
@@ -119,6 +120,7 @@ def _build_env() -> Environment:
     env.filters["dt_full"] = format_dt_full
     env.filters["iso"] = isoformat_local
     env.filters["reading_minutes"] = reading_minutes
+    env.filters["plain_inline"] = strip_inline
     env.filters["post_url"] = lambda slug: f"/{slug}"
     env.filters["tag_url"] = lambda slug: f"/tag/{slug}"
     env.globals["settings"] = settings
