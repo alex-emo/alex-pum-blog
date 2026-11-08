@@ -34,17 +34,42 @@ _IDENT = re.compile(r"(?<![\\A-Za-z])([A-Za-z]{2,})(?![A-Za-z])")
 _FUNC = re.compile(r"(?<![\\A-Za-z])(max|min|log|ln|exp|sin|cos|tan|gcd|lim)(?![A-Za-z])")
 
 
-def _tidy_math_segment(seg: str) -> str:
-    """把 log2 变成 \\log_2，把 st 这类多字母变量变成正体。
-
-    TeX 默认把连续字母当成多个变量相乘（st 会排成 s·t），
-    这里对常见函数名与多字母标识符做一次轻量修正。
-    """
+def _tidy_plain_math(seg: str) -> str:
+    """只处理普通数学片段：log2、函数名、多字母标识符。"""
     seg = re.sub(r"(?<![\\A-Za-z])log2(?![A-Za-z0-9])", r"\\log_2", seg)
     seg = _FUNC.sub(lambda m: _MATH_FUNCS[m.group(1)], seg)
     seg = _IDENT.sub(lambda m: "\\mathrm{" + m.group(1) + "}", seg)
     return seg
 
+
+def _tidy_math_segment(seg: str) -> str:
+    """把 log2 变成 \\log_2，把 st 这类多字母变量变成正体。
+
+    TeX 默认把连续字母当成多个变量相乘（st 会排成 s·t），
+    这里对常见函数名与多字母标识符做一次轻量修正。
+
+    但命令参数里的词必须原样保留：\\begin{cases}、\\text{...}、
+    \\mathrm{...} 一旦被改成 \\mathrm{cases} 就会报
+    "Invalid environment name"。
+    """
+    out: list[str] = []
+    last = 0
+    for m in _PROTECTED_GROUP.finditer(seg):
+        out.append(_tidy_plain_math(seg[last : m.start()]))
+        out.append(m.group(0))
+        last = m.end()
+    out.append(_tidy_plain_math(seg[last:]))
+    return "".join(out)
+
+
+# 这些命令的花括号参数是"名字/文本"，不能被 \mathrm{} 包起来
+_PROTECTED_GROUP = re.compile(
+    r"\\(?:begin|end|text|textrm|textbf|textit|mathrm|mathbf|mathit|"
+    r"mathbb|mathcal|mathsf|mathtt|operatorname|label|tag|href|url|color|"
+    r"hspace|vspace)"
+    r"\s*\{[^{}]*\}"
+    r"|\\\[[^\]\n]*\]"
+)
 
 _BLOCK_MATH = re.compile(r"\$\$(.+?)\$\$", re.S)
 _INLINE_MATH = re.compile(r"(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)")
