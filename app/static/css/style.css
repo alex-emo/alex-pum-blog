@@ -283,6 +283,8 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 /* MathJax：块级公式留出呼吸空间 */
 .post-body mjx-container[display="true"] { margin: 1.5em 0; font-size: 1.12em; }
 .post-body mjx-container { max-width: 100%; }
+/* 超宽公式等比缩到正文宽度，避免横向滚动条 */
+.post-body mjx-container svg { max-width: 100%; height: auto; }
 
 .toc-box {
   margin: 0 0 2rem; padding: .9rem 1rem; background: var(--bg-elevated);
