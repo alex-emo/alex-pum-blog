@@ -38,7 +38,7 @@
     return {
       x: rand(0, width),
       y: seed ? rand(-height, height) : rand(-height * 0.4, -20),
-      size: rand(5, 11),
+      size: rand(6, 12),
       speed: rand(14, 34),
       swayAmp: rand(14, 40),
       swayFreq: rand(0.3, 1.1),
@@ -64,6 +64,7 @@
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.rotate(p.rotation);
+    ctx.scale(0.62, 1.35);
     ctx.globalAlpha = p.alpha;
     const gradient = ctx.createLinearGradient(0, -p.size, 0, p.size);
     gradient.addColorStop(0, p.colorB);
