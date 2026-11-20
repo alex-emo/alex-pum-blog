@@ -39,7 +39,7 @@
       x: rand(0, width),
       y: seed ? rand(-height, height) : rand(-height * 0.4, -20),
       size: rand(6, 12),
-      speed: rand(14, 34),
+      speed: rand(34, 72),
       swayAmp: rand(14, 40),
       swayFreq: rand(0.3, 1.1),
       swayPhase: rand(0, Math.PI * 2),
