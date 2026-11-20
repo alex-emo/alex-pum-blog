@@ -127,6 +127,16 @@ img { max-width: 100%; }
 }
 .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
 .field textarea { resize: vertical; }
+
+/* 封面图：URL 输入 + 上传按钮 + 预览 */
+.cover-row { display: flex; gap: .5rem; align-items: center; }
+.cover-row input[type="text"] { flex: 1 1 auto; min-width: 0; }
+.cover-row button { flex: 0 0 auto; white-space: nowrap; font-size: .86rem; padding: .45rem .8rem; }
+.cover-preview { margin-top: .6rem; }
+.cover-preview img {
+  display: block; width: 100%; max-width: 320px; aspect-ratio: 2.2 / 1;
+  object-fit: cover; border-radius: var(--radius-sm); background: var(--bg-elevated);
+}
 .form-msg { min-height: 1.2em; font-size: .86rem; margin: .6rem 0 0; }
 .form-msg.err { color: var(--danger); }
 .form-msg.ok { color: var(--ok); }

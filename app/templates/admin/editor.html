@@ -64,8 +64,16 @@
         <input id="post-tags" name="tags" type="text" placeholder="用逗号分隔，例如：Python, 折腾">
       </div>
       <div class="field">
-        <label for="post-cover">封面图 URL</label>
-        <input id="post-cover" name="cover_image" type="text" maxlength="300" placeholder="可选，例如 /media/2026/11/xxx.webp">
+        <label for="post-cover">封面图</label>
+        <div class="cover-row">
+          <input id="post-cover" name="cover_image" type="text" maxlength="300" placeholder="可选，例如 /media/2026/11/xxx.webp">
+          <button type="button" class="btn-ghost" id="cover-upload">上传封面</button>
+          <button type="button" class="btn-ghost" id="cover-clear" hidden>清除</button>
+          <input id="cover-file" type="file" accept="image/*" hidden>
+        </div>
+        <div class="cover-preview" id="cover-preview" hidden>
+          <img id="cover-preview-img" alt="封面预览">
+        </div>
       </div>
     </div>
   </details>

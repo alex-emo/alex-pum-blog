@@ -123,10 +123,64 @@
     }
   });
 
+  /* ---------------------------------------------------------- 封面图 */
+  const coverFile = document.getElementById("cover-file");
+  const coverUploadButton = document.getElementById("cover-upload");
+  const coverClearButton = document.getElementById("cover-clear");
+  const coverPreview = document.getElementById("cover-preview");
+  const coverPreviewImg = document.getElementById("cover-preview-img");
+
+  function syncCover() {
+    const url = coverInput.value.trim();
+    if (url) {
+      coverPreviewImg.src = url;
+      coverPreview.hidden = false;
+    } else {
+      coverPreview.hidden = true;
+      coverPreviewImg.removeAttribute("src");
+    }
+    coverClearButton.hidden = !url;
+  }
+
+  coverInput.addEventListener("input", syncCover);
+
+  coverUploadButton.addEventListener("click", () => coverFile.click());
+
+  coverFile.addEventListener("change", async () => {
+    const file = coverFile.files && coverFile.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast("只能上传图片", true);
+      return;
+    }
+    coverUploadButton.disabled = true;
+    coverUploadButton.textContent = "上传中…";
+    try {
+      const media = await Api.upload("/api/admin/media", file);
+      coverInput.value = media.url;
+      syncCover();
+      markDirty();
+      toast("封面已上传，记得保存");
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      coverUploadButton.disabled = false;
+      coverUploadButton.textContent = "上传封面";
+      coverFile.value = "";
+    }
+  });
+
+  coverClearButton.addEventListener("click", () => {
+    coverInput.value = "";
+    syncCover();
+    markDirty();
+  });
+
   /* ---------------------------------------------------------- 加载已有文章 */
   async function loadPost() {
     if (!postId) {
       setSaved("新文章");
+      syncCover();
       return;
     }
     try {
@@ -137,6 +191,7 @@
       tagsInput.value = post.tags.map((tag) => tag.name).join(", ");
       slugInput.value = post.slug;
       coverInput.value = post.cover_image || "";
+      syncCover();
       currentStatus = post.status;
       deleteButton.hidden = false;
       noteEl.textContent = "创建于 " + formatDate(post.created_at) +
