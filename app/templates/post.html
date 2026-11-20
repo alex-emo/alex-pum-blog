@@ -95,4 +95,7 @@
 
 {% block scripts %}
 <script src="{{ asset_url('/static/js/comments.js') }}" defer></script>
+{% if post.slug == 'rip' %}
+<script src="{{ asset_url('/static/js/petals.js') }}" defer></script>
+{% endif %}
 {% endblock %}

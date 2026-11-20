@@ -506,3 +506,47 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
   .site-nav a { font-size: .9rem; }
   .post-hero img { aspect-ratio: 16 / 9; }
 }
+
+
+/* ============================================================ 小彩蛋：旗帜与蜡烛 */
+@keyframes flag-wave {
+  0%, 100% { transform: rotate(-5deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.08); }
+}
+@keyframes candle-flicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  20% { opacity: .78; transform: scale(0.97) translateY(1px); }
+  45% { opacity: .95; transform: scale(1.03) translateY(-1px); }
+  70% { opacity: .85; transform: scale(0.99); }
+}
+@keyframes candle-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 176, 80, .55)); }
+  50% { filter: drop-shadow(0 0 12px rgba(255, 196, 110, .9)); }
+}
+
+.pride-flag {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  animation: flag-wave 3.4s ease-in-out infinite;
+}
+.profile-flag { font-size: .9em; animation-duration: 4.2s; }
+
+.candle {
+  display: inline-block;
+  animation: candle-flicker 1.7s ease-in-out infinite, candle-glow 1.7s ease-in-out infinite;
+}
+
+/* 花瓣飘落画布（仅纪念文章） */
+.petals-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: .85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pride-flag, .candle { animation: none; }
+}
