@@ -550,3 +550,27 @@ html[data-theme-mode="dark"] .theme-toggle .icon-dark { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .pride-flag, .candle { animation: none; }
 }
+
+
+/* ============================================================ 11.10–11.25：跨性别旗帜配色 */
+body.pride-window {
+  background-image: linear-gradient(180deg,
+    rgba(91, 206, 250, .34) 0%,
+    rgba(245, 169, 184, .32) 20%,
+    rgba(255, 255, 255, .55) 40%,
+    rgba(255, 255, 255, .55) 60%,
+    rgba(245, 169, 184, .32) 80%,
+    rgba(91, 206, 250, .34) 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+/* 与旗帜同构：蓝 / 粉 / 白 / 粉 / 蓝 五条 */
+html[data-theme="dark"] body.pride-window {
+  background-image: linear-gradient(180deg,
+    rgba(91, 206, 250, .24) 0%,
+    rgba(245, 169, 184, .22) 20%,
+    rgba(255, 255, 255, .10) 40%,
+    rgba(255, 255, 255, .10) 60%,
+    rgba(245, 169, 184, .22) 80%,
+    rgba(91, 206, 250, .24) 100%);
+}

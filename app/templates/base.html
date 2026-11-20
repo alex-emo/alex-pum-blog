@@ -74,7 +74,7 @@
   </script>
   {% block head %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}{% if pride_window %} pride-window{% endif %}">
 <a class="skip-link" href="#main">跳到正文</a>
 
 <header class="site-header">
@@ -116,6 +116,9 @@
   </div>
 </footer>
 <script src="{{ asset_url('/static/js/theme.js') }}" defer></script>
+{% if pride_window %}
+<script src="{{ asset_url('/static/js/petals.js') }}" defer></script>
+{% endif %}
 {% block scripts %}{% endblock %}
 </body>
 </html>

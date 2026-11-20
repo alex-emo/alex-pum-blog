@@ -7,7 +7,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime
 from urllib.parse import urlencode
+from zoneinfo import ZoneInfo
 
 from fastapi import Request
 from fastapi.responses import HTMLResponse
@@ -131,6 +133,15 @@ def _build_env() -> Environment:
 templates = _build_env()
 
 
+PRIDE_WINDOW = ((11, 10), (11, 25))
+
+
+def in_pride_window() -> bool:
+    """每年 11.10–11.25（含）开启跨性别旗帜配色与花瓣，按站点时区判断。"""
+    now = datetime.now(ZoneInfo(settings.site_timezone))
+    return (now.month, now.day) >= PRIDE_WINDOW[0] and (now.month, now.day) <= PRIDE_WINDOW[1]
+
+
 def render(
     request: Request,
     name: str,
@@ -145,6 +156,7 @@ def render(
         "url_path": request.url.path,
         "query": dict(request.query_params),
         "stats": site_stats(),
+        "pride_window": in_pride_window(),
         **context,
     }
     html = templates.get_template(name).render(**ctx)
